@@ -5,143 +5,227 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Copa do Mundo FIFA 2026 — Niagro Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   /* Paleta Brasil / Niagro */
-  --gold:#FFDF00;--gold2:#F9A825;--green:#009B3A;--yellow:#FEDF00;
-  --red:#D4001F;
-  --bg:#031405;          /* Fundo principal Verde Escuro */
-  --card:#06210A;        /* Cards Verde Bandeira Escuro */
-  --card2:#0A3311;       /* Hover / Destaques */
-  --border:#134D1E;      /* Bordas em tom de folha */
-  --text:#F2F7F2;        /* Texto claro levemente esverdeado */
-  --muted:#8FBC8F;       /* Texto secundário verde suave */
+  --gold:#FFDF00; --gold2:#F9A825; --green:#009B3A; --yellow:#FEDF00;
+  --bg:#020D04;          
+  --card:rgba(6, 33, 10, 0.6); 
+  --border:rgba(255, 255, 255, 0.08); 
+  --text:#FFFFFF;        
+  --muted:#C8E6C9;       
 }
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;flex-direction:column}
+body{
+  background: radial-gradient(circle at top left, #052b0e, #020d04 80%);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  display:flex;
+  flex-direction:column;
+}
 
-/* ── HERO ── */
-.hero{background:linear-gradient(135deg,#031405 0%,#06210A 40%,#082B0E 100%);border-bottom:2px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:100px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,223,0,.1) 0%,transparent 70%);pointer-events:none}
-.hero-left{display:flex;align-items:center;gap:24px}
-.niagro-logo{width: 250px; height: 50px; object-fit: contain; filter: drop-shadow(0 0 6px rgba(255,255,255,0.1));}
-.trophy{font-size:50px;filter:drop-shadow(0 0 14px rgba(255,223,0,.45))}
-.title-block h1{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--gold);line-height:1;text-shadow:0 0 24px rgba(255,223,0,.25)}
-.title-block .sub{font-size:14px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+/* ── HERO (Compacto) ── */
+.hero{
+  background:rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--border);
+  padding:16px 32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+.hero-left{display:flex;align-items:center;gap:20px}
+.niagro-logo{width: 200px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));}
+.trophy{font-size:40px; filter:drop-shadow(0 0 20px rgba(255,223,0,.6)); animation: float 4s ease-in-out infinite;}
+@keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-8px);} }
+
+.title-block h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--gold);line-height:1;text-shadow:0 0 24px rgba(255,223,0,.3)}
+.title-block .sub{font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px; font-weight: 500;}
 .hero-right{display:flex;align-items:center;gap:20px}
-.live-badge{display:flex;align-items:center;gap:8px;background:rgba(212,0,31,.15);border:1px solid rgba(212,0,31,.3);border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600;color:#FF4444;letter-spacing:1px}
-.live-dot{width:10px;height:10px;border-radius:50%;background:#FF4444;animation:pulse 1.2s infinite}
-.api-status{font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid;letter-spacing:1px;cursor:pointer}
-.api-ok{color:#4CAF50;border-color:rgba(76,175,80,.3);background:rgba(76,175,80,.08)}
-.api-err{color:#FF6666;border-color:rgba(255,102,102,.3);background:rgba(255,102,102,.08)}
+
+.live-badge{display:flex;align-items:center;gap:8px;background:rgba(212,0,31,.2);border:1px solid rgba(212,0,31,.4);border-radius:10px;padding:8px 16px;font-size:14px;font-weight:700;color:#FF5555;letter-spacing:1px; box-shadow: 0 0 15px rgba(212,0,31,0.3);}
+.live-dot{width:10px;height:10px;border-radius:50%;background:#FF5555;animation:pulse 1s infinite}
+.api-status{font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid;letter-spacing:1px;cursor:pointer; font-weight: 600;}
+.api-ok{color:#4CAF50;border-color:rgba(76,175,80,.4);background:rgba(76,175,80,.1)}
+.api-err{color:#FF6666;border-color:rgba(255,102,102,.4);background:rgba(255,102,102,.1)}
 .api-load{color:var(--muted);border-color:var(--border);animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.clock{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;text-align:right}
-.date-str{font-size:14px;color:var(--muted);text-align:right;letter-spacing:1px;text-transform:uppercase}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+.clock{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);letter-spacing:2px;text-align:right}
+.date-str{font-size:13px;color:var(--muted);text-align:right;letter-spacing:1px;text-transform:uppercase; font-weight: 500;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
 
-/* ── TICKER ── */
-.ticker-wrap{background:var(--card);border-bottom:1px solid var(--border);overflow:hidden;height:48px;display:flex;align-items:center;flex-shrink:0}
-.ticker-label{background:var(--gold);color:#031405;font-size:15px;font-weight:700;padding:0 20px;height:48px;display:flex;align-items:center;letter-spacing:1px;flex-shrink:0}
-.ticker-scroll{overflow:hidden;flex:1;height:48px;display:flex;align-items:center}
+/* ── TICKER (Compacto) ── */
+.ticker-wrap{background:rgba(0,0,0,0.3); border-bottom:1px solid var(--border);overflow:hidden;height:40px;display:flex;align-items:center;flex-shrink:0}
+.ticker-label{background:var(--gold);color:#031405;font-size:14px;font-weight:800;padding:0 16px;height:40px;display:flex;align-items:center;letter-spacing:1px;flex-shrink:0; text-transform: uppercase;}
+.ticker-scroll{overflow:hidden;flex:1;height:40px;display:flex;align-items:center}
 .ticker-inner{display:flex;white-space:nowrap;animation:tickermove 90s linear infinite}
-.ticker-item{font-size:16px;color:var(--text);padding:0 40px;border-right:1px solid var(--border)}
-.ticker-item .ts{color:var(--gold);font-weight:600}
-.ticker-item .tl{color:#FF6666;font-size:13px;margin-left:6px;animation:pulse 2s infinite}
+.ticker-item{font-size:15px;font-weight: 500;color:var(--text);padding:0 30px;border-right:1px solid var(--border)}
+.ticker-item .ts{color:var(--gold);font-weight:700; font-size: 16px;}
+.ticker-item .tl{color:#FF5555;font-size:13px;font-weight:700;margin-left:8px;animation:pulse 2s infinite}
 @keyframes tickermove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── MAIN LAYOUT ── */
-.main{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;overflow:hidden}
-.left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.right-panel{display:flex;flex-direction:column;overflow:hidden}
+/* ── MAIN LAYOUT (Menor margem) ── */
+.main{display:grid;grid-template-columns:1.2fr 1fr;flex:1;min-height:0;overflow:hidden; gap: 16px; padding: 16px;}
+.left-panel{display:flex;flex-direction:column;overflow:hidden; gap: 12px;}
+.right-panel{display:flex;flex-direction:column;overflow:hidden;}
 
 /* ── AUTO-SCROLL CONTAINERS ── */
-.scroll-zone{flex:1;overflow:hidden;position:relative}
+.scroll-zone{flex:1;overflow:hidden;position:relative; mask-image: linear-gradient(to bottom, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);}
 .scroll-content{will-change:transform}
 
-/* ── SECTION TITLE ── */
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);display:flex;align-items:center;gap:10px;padding:20px 24px 12px;flex-shrink:0;border-bottom:1px solid var(--border)}
-.section-title .accent{width:4px;height:22px;background:linear-gradient(to bottom,var(--gold),var(--gold2));border-radius:2px}
-.section-title .upd{margin-left:auto;font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);letter-spacing:0}
+/* ── SECTION TITLE (Menor) ── */
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);display:flex;align-items:center;gap:10px;padding:6px 0 10px;flex-shrink:0; border-bottom: 1px solid var(--border); margin-bottom: 12px;}
+.section-title .accent{width:5px;height:22px;background:linear-gradient(to bottom,var(--gold),var(--gold2));border-radius:3px}
 
-/* ── STATS ROW ── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 24px;flex-shrink:0;border-bottom:1px solid var(--border)}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1}
-.stat-label{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+/* ── STATS ROW (Compacto) ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex-shrink:0;}
+.stat-card{background:var(--card); backdrop-filter: blur(8px); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center; box-shadow: 0 4px 16px rgba(0,0,0,0.15);}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1; text-shadow: 0 2px 5px rgba(255,223,0,0.2);}
+.stat-label{font-size:11px;font-weight: 600;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 
-/* ── BRASIL HIGHLIGHT ── */
-.brazil-highlight{background:linear-gradient(135deg,#041C07,#06210A);border-bottom:1px solid rgba(255,223,0,.3);padding:16px 24px;flex-shrink:0}
-.brazil-header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.brazil-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:2px}
-.brazil-sub{font-size:14px;color:var(--text);margin-top:2px}
-.br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:14px}
-.br-fix{background:rgba(255,223,0,.08);border:1px solid rgba(255,223,0,.15);border-radius:8px;padding:10px 12px;text-align:center}
-.br-fix .opp{font-size:24px;margin-bottom:4px}
-.br-fix .opp-name{font-weight:600;font-size:15px}
-.br-fix .fix-date{color:var(--yellow);font-size:13px;margin-top:2px}
-.br-fix .fix-venue{color:var(--muted);font-size:12px;margin-top:2px}
+/* ── BRASIL HIGHLIGHT (Compacto) ── */
+.brazil-highlight{
+  background:linear-gradient(135deg, rgba(0, 155, 58, 0.15), rgba(0,0,0,0.4)), url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 L100,100 M100,0 L0,100" stroke="rgba(255,223,0,0.05)" stroke-width="2"/></svg>');
+  border:1px solid rgba(255,223,0,.2);
+  border-radius: 12px;
+  padding:12px 16px;
+  flex-shrink:0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.brazil-highlight::after {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,223,0,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.brazil-header{display:flex;align-items:center;gap:10px;margin-bottom:8px; position: relative; z-index: 2;}
+.brazil-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+.brazil-sub{font-size:13px;color:var(--text);margin-top:2px; font-weight: 500;}
+.br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px; position: relative; z-index: 2;}
+.br-fix{background:rgba(255,255,255,.05); backdrop-filter: blur(4px); border:1px solid rgba(255,223,0,.15);border-radius:8px;padding:8px;text-align:center; transition: transform 0.3s;}
+.br-fix:hover {transform: translateY(-2px);}
+.br-fix .opp{font-size:20px;margin-bottom:2px}
+.br-fix .opp-name{font-weight:700;font-size:13px; text-transform: uppercase;}
+.br-fix .fix-date{color:var(--yellow);font-size:12px;margin-top:2px; font-weight: 600;}
+.br-fix .fix-venue{color:var(--muted);font-size:11px;margin-top:2px}
 
-/* ── GAME CARDS ── */
-.games-list{padding:14px 24px}
-.game-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px}
-.game-card.live-game{border-color:rgba(212,0,31,.5);background:linear-gradient(135deg,#0A3311,#180A10)}
-.game-card.brazil-game{border-color:rgba(255,223,0,.4);background:linear-gradient(135deg,#06210A,#0A3311)}
-.game-card.finished{opacity:.8}
+/* ── GAME CARDS (Menor volume) ── */
+.games-list{display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px;}
+.game-card{
+  background:var(--card);
+  backdrop-filter: blur(12px);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px 18px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+.game-card.live-game{border-color:rgba(212,0,31,.4); background:linear-gradient(135deg, rgba(10,51,17,0.8), rgba(24,10,16,0.8)); box-shadow: 0 4px 20px rgba(212,0,31,0.15);}
+.game-card.brazil-game{border-color:rgba(255,223,0,.3); background:linear-gradient(135deg, rgba(6,33,10,0.8), rgba(10,51,17,0.8));}
+.game-card.finished{opacity:.75; box-shadow: none;}
+
+@keyframes flash-goal {
+  0% { box-shadow: 0 0 0px rgba(255, 223, 0, 0); background: var(--card); }
+  20% { box-shadow: 0 0 30px rgba(255, 223, 0, 0.8); background: rgba(255, 223, 0, 0.15); transform: scale(1.02); }
+  100% { box-shadow: 0 4px 20px rgba(0,0,0,0.15); background: var(--card); transform: scale(1); }
+}
+.goal-update { animation: flash-goal 4s ease-out; }
+
 .team-left{text-align:right}
 .team-right{text-align:left}
-.team-name{font-size:16px;font-weight:600;color:var(--text);margin-top:4px}
-.team-flag{font-size:28px;line-height:1}
-.score-block{text-align:center;min-width:100px}
-.score{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);letter-spacing:3px;line-height:1}
-.score.live-score{color:#FF9944}
+.team-name{font-size:16px;font-weight:700;color:var(--text);margin-top:4px; text-transform: uppercase; letter-spacing: 1px;}
+.team-flag{font-size:32px;line-height:1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));}
+.score-block{text-align:center;min-width:110px}
+.score{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);letter-spacing:2px;line-height:1; text-shadow: 0 2px 8px rgba(0,0,0,0.4);}
+.score.live-score{color:#FF8800; text-shadow: 0 0 12px rgba(255, 136, 0, 0.4);}
 .score.upcoming{font-size:18px;color:var(--muted);letter-spacing:1px}
-.game-time{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:1px}
-.game-time.live-text{color:#FF6666;animation:pulse 2s infinite}
+.game-time{font-size:13px;font-weight: 600;color:var(--muted);margin-top:6px;letter-spacing:1px}
+.game-time.live-text{color:#FF5555;animation:pulse 2s infinite}
 .game-time.finished-text{color:#4CAF50}
-.game-venue{font-size:12px;color:var(--muted);margin-top:2px;opacity:.6}
-.group-badge{display:inline-block;background:rgba(255,223,0,.08);border:1px solid rgba(255,223,0,.2);color:var(--gold);font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:1px;margin-bottom:4px}
-.group-badge.brazil{background:rgba(255,223,0,.2);border-color:rgba(255,223,0,.5);color:#FFDF00}
+.game-venue{font-size:11px;color:var(--muted);margin-top:4px;opacity:.8}
+.group-badge{display:inline-block;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--muted);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:1px;margin-bottom:6px}
+.group-badge.brazil{background:rgba(255,223,0,.15);border-color:rgba(255,223,0,.4);color:#FFDF00}
 
-/* ── GROUPS GRID ── */
-.groups-wrap{padding:14px 24px;overflow:hidden}
-.groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.group-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:hidden}
-.group-header{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
-.standings-table{width:100%;border-collapse:collapse;font-size:15px}
-.standings-table th{color:var(--muted);font-weight:500;font-size:12px;letter-spacing:1px;text-align:center;padding:4px 6px;text-transform:uppercase}
+/* ── GROUPS GRID (Tabelas menores) ── */
+.groups-wrap{padding-bottom: 16px;}
+.groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.group-card{background:var(--card);backdrop-filter: blur(8px); border:1px solid var(--border);border-radius:12px;padding:14px;overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15);}
+.group-header{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.standings-table{width:100%;border-collapse:collapse;font-size:14px}
+.standings-table th{color:var(--muted);font-weight:600;font-size:11px;letter-spacing:1px;text-align:center;padding:4px;text-transform:uppercase}
 .standings-table th.left{text-align:left}
-.standings-table td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
-.standings-table td.left{text-align:left;font-weight:500}
+.standings-table td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03)}
+.standings-table td.left{text-align:left;font-weight:600}
 .standings-table tr:last-child td{border-bottom:none}
-.flag-sm{font-size:18px;margin-right:6px;vertical-align:middle}
-.pts{font-weight:700;color:var(--gold);font-size:16px}
-.pos{color:var(--muted);font-size:13px}
+.flag-sm{font-size:18px;margin-right:6px;vertical-align:middle; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));}
+.pts{font-weight:800;color:var(--gold);font-size:16px}
+.pos{color:var(--muted);font-size:13px; font-weight: 700;}
 .pos.q{color:#4CAF50}
 .pos.third{color:#FF9800}
-.sg-pos{color:#4CAF50}
+.sg-pos{color:#4CAF50; font-weight: 600;}
 .sg-neg{color:#F44336}
 
-/* ── LOADING ── */
-.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(3,20,5,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .6s}
+/* ── LOADING & EMPTY STATES ── */
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2, 13, 4, 0.95); backdrop-filter: blur(15px); display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .6s}
 .loading-overlay.hidden{opacity:0;pointer-events:none}
-.spinner{width:64px;height:64px;border:4px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
+.spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--gold)}
-.loading-sub{font-size:15px;color:var(--muted);margin-top:10px;letter-spacing:1px}
+.loading-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gold)}
+.loading-sub{font-size:15px;color:var(--muted);margin-top:10px;letter-spacing:1px; font-weight: 500;}
 
-/* ── SCROLL INDICATOR ── */
-.scroll-indicator{position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none}
+/* ESTILO PARA A IMAGEM DO LANGO */
+.lango-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(255,223,0,0.5); margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+
+.empty-state {
+  color: var(--muted);
+  font-size: 16px;
+  padding: 24px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.1);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── MARCA D'ÁGUA ── */
+.watermark {
+  position: fixed;
+  bottom: 12px;
+  right: 20px;
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.3;
+  z-index: 1000;
+  pointer-events: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 </style>
 </head>
 <body>
 
+<div class="watermark">Desenvolvido por Luciano Suzuki</div>
+
 <div class="loading-overlay" id="loader">
+  <img src="lango_torcedor.png" alt="Lango Torcedor" class="lango-avatar" onerror="this.style.display='none'">
   <div class="spinner"></div>
   <div class="loading-title">COPA DO MUNDO 2026</div>
-  <div class="loading-sub" id="load-msg">Conectando...</div>
+  <div class="loading-sub" id="load-msg">O Lango Canarinho está escalando a seleção de dados...</div>
 </div>
 
 <div class="hero">
@@ -167,25 +251,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
   <div class="ticker-label">⚽ PLACAR AO VIVO</div>
   <div class="ticker-scroll">
     <div class="ticker-inner" id="ticker">
-      <div class="ticker-item">Buscando resultados ao vivo...</div>
-      <div class="ticker-item">Buscando resultados ao vivo...</div>
+      <div class="ticker-item">Buscando resultados...</div>
+      <div class="ticker-item">Buscando resultados...</div>
     </div>
   </div>
 </div>
 
 <div class="main">
-
   <div class="left-panel">
-    <div class="stats-row">
+     <div class="stats-row">
       <div class="stat-card"><div class="stat-num">48</div><div class="stat-label">Seleções</div></div>
       <div class="stat-card"><div class="stat-num">104</div><div class="stat-label">Jogos</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-live">—</div><div class="stat-label">Ao Vivo</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-today">—</div><div class="stat-label">Hoje</div></div>
     </div>
-
+	 
     <div class="brazil-highlight">
       <div class="brazil-header">
-        <div style="font-size:32px">🇧🇷</div>
+        <div style="font-size:24px">🇧🇷</div>
         <div>
           <div class="brazil-title">Brasil — Grupo C</div>
           <div class="brazil-sub">⭐ Rumo ao Hexa! · Cabeça de chave</div>
@@ -193,32 +276,30 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
       </div>
       <div class="br-fixtures">
         <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div><div class="fix-venue">Nova York/NJ</div></div>
-        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div><div class="fix-venue">—</div></div>
-        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div><div class="fix-venue">—</div></div>
+        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div><div class="fix-venue">A Definir</div></div>
+        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div><div class="fix-venue">A Definir</div></div>
       </div>
     </div>
 
     <div class="section-title">
       <div class="accent"></div>Jogos — Ao Vivo &amp; Hoje
-      <span class="upd" id="last-upd">—</span>
     </div>
 
     <div class="scroll-zone" id="left-scroll-zone">
       <div class="scroll-content" id="left-scroll-content">
         <div class="games-list" id="live-games-list">
-          <div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Buscando jogos...</div>
+          <div class="empty-state">Buscando jogos...</div>
         </div>
 
-        <div class="section-title" style="margin-top:8px">
+        <div class="section-title" style="margin-top:12px">
           <div class="accent"></div>Próximos Jogos
         </div>
         <div class="games-list" id="upcoming-games-list">
-          <div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Buscando agenda...</div>
+          <div class="empty-state">Buscando agenda...</div>
         </div>
 
-        <div style="height:80px"></div>
+        <div style="height:60px"></div>
       </div>
-      <div class="scroll-indicator"></div>
     </div>
   </div>
 
@@ -230,12 +311,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
       <div class="scroll-content" id="right-scroll-content">
         <div class="groups-wrap">
           <div class="groups-grid" id="groups-grid">
-            <div style="color:var(--muted);font-size:16px;padding:20px 0;grid-column:1/-1;text-align:center">Buscando grupos...</div>
+            <div class="empty-state" style="grid-column:1/-1;">Buscando grupos...</div>
           </div>
         </div>
-        <div style="height:80px"></div>
+        <div style="height:60px"></div>
       </div>
-      <div class="scroll-indicator"></div>
     </div>
   </div>
 
@@ -256,9 +336,28 @@ const FLAGS = {
   'Argentina':'🇦🇷','Algeria':'🇩🇿','Austria':'🇦🇹','Jordan':'🇯🇴',
   'Portugal':'🇵🇹','DR Congo':'🇨🇩','Congo DR':'🇨🇩','Uzbekistan':'🇺🇿','Colombia':'🇨🇴',
   'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦',
-  'Denmark':'🇩🇰','Italy':'🇮🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿'
+  'Denmark':'🇩🇰','Italy':'🇮🇹'
 };
 const flag = n => FLAGS[n] || '🏳️';
+
+// ─── TRADUÇÕES PARA PORTUGUÊS ────────────────────────────────────────────────
+const NOME_PT = {
+  'Mexico':'México', 'South Africa':'África do Sul', 'South Korea':'Coreia do Sul', 'Czechia':'Tchéquia', 'Czech Republic':'Tchéquia',
+  'Canada':'Canadá', 'Qatar':'Catar', 'Switzerland':'Suíça', 'Bosnia & Herzegovina':'Bósnia e Herz.', 'Bosnia and Herzegovina':'Bósnia e Herz.',
+  'Brazil':'Brasil', 'Morocco':'Marrocos', 'Haiti':'Haiti', 'Scotland':'Escócia',
+  'USA':'Estados Unidos', 'United States':'Estados Unidos', 'Paraguay':'Paraguai', 'Australia':'Austrália', 'Türkiye':'Turquia', 'Turkey':'Turquia',
+  'Germany':'Alemanha', 'Curaçao':'Curaçao', 'Curacao':'Curaçao', "Côte d'Ivoire":'Costa do Marfim', 'Ivory Coast':'Costa do Marfim', 'Ecuador':'Equador',
+  'Netherlands':'Holanda', 'Japan':'Japão', 'Tunisia':'Tunísia', 'Sweden':'Suécia', 'Ukraine':'Ucrânia',
+  'Belgium':'Bélgica', 'Egypt':'Egito', 'Iran':'Irã', 'New Zealand':'Nova Zelândia',
+  'Spain':'Espanha', 'Cabo Verde':'Cabo Verde', 'Cape Verde':'Cabo Verde', 'Saudi Arabia':'Arábia Saudita', 'Uruguay':'Uruguai',
+  'France':'França', 'Senegal':'Senegal', 'Iraq':'Iraque', 'Norway':'Noruega',
+  'Argentina':'Argentina', 'Algeria':'Argélia', 'Austria':'Áustria', 'Jordan':'Jordânia',
+  'Portugal':'Portugal', 'DR Congo':'RD Congo', 'Congo DR':'RD Congo', 'Uzbekistan':'Uzbequistão', 'Colombia':'Colômbia',
+  'England':'Inglaterra', 'Croatia':'Croácia', 'Ghana':'Gana', 'Panama':'Panamá',
+  'Denmark':'Dinamarca', 'Italy':'Itália'
+};
+
+const pt = n => NOME_PT[n] || n;
 
 // ─── GRUPOS ESTÁTICOS ─────────────────────────────────────────────────────────
 const GROUPS_STATIC = [
@@ -278,17 +377,14 @@ const GROUPS_STATIC = [
 
 let allGames = [];
 let standingsData = {};
+let previousScores = {}; 
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function fmtTime(iso){
-  try{
-    return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'})+'h';
-  }catch(e){return '—'}
+  try{ return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'})+'h'; }catch(e){return '—'}
 }
 function fmtDate(iso){
-  try{
-    return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:'America/Sao_Paulo'});
-  }catch(e){return '—'}
+  try{ return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:'America/Sao_Paulo'}); }catch(e){return '—'}
 }
 
 // ─── PARSE ESPN ───────────────────────────────────────────────────────────────
@@ -301,21 +397,35 @@ function parseGames(data){
       const home = comp.competitors?.find(c=>c.homeAway==='home');
       const away = comp.competitors?.find(c=>c.homeAway==='away');
       if(!home||!away) return;
+      
+      const homeName = home.team?.displayName || home.team?.name || '';
+      const awayName = away.team?.displayName || away.team?.name || '';
+      const homeScore = parseInt(home.score||0);
+      const awayScore = parseInt(away.score||0);
       const state = comp.status?.type?.state || 'pre';
       const detail = comp.status?.displayClock || comp.status?.type?.shortDetail || '';
       const group = (ev.groups?.[0]?.name || '').replace(/Group\s*/i,'Grupo ');
+
+      const gameId = homeName + '-' + awayName;
+      const totalScore = homeScore + awayScore;
+      let isGoal = false;
+      
+      if (previousScores[gameId] !== undefined && previousScores[gameId] < totalScore) {
+        isGoal = true;
+      }
+      previousScores[gameId] = totalScore;
+
       allGames.push({
+        id: gameId,
         date: ev.date,
-        homeName: home.team?.displayName || home.team?.name || '',
-        awayName: away.team?.displayName || away.team?.name || '',
-        homeScore: parseInt(home.score||0),
-        awayScore: parseInt(away.score||0),
+        homeName, awayName, homeScore, awayScore,
         state, detail,
         venue: comp.venue?.address?.city || comp.venue?.fullName || '',
         group: group || 'Copa 2026',
         isLive: state==='in',
         isDone: state==='post',
-        isPre: state==='pre'
+        isPre: state==='pre',
+        justScored: isGoal
       });
     });
   }catch(ex){console.error('parseGames',ex)}
@@ -345,27 +455,30 @@ function parseStandings(data){
 // ─── RENDER GAME CARD ─────────────────────────────────────────────────────────
 function buildGameCard(g){
   const isBr = g.homeName==='Brazil'||g.awayName==='Brazil';
-  const cls = g.isLive?'game-card live-game':isBr?'game-card brazil-game':g.isDone?'game-card finished':'game-card';
+  const baseCls = g.isLive ? 'game-card live-game' : isBr ? 'game-card brazil-game' : g.isDone ? 'game-card finished' : 'game-card';
+  const finalCls = g.justScored ? `${baseCls} goal-update` : baseCls;
+  
   const gbCls = isBr?'group-badge brazil':'group-badge';
   let scoreHtml, timeHtml;
+  
   if(g.isLive){
-    scoreHtml = `<div class="score live-score">${g.homeScore}<span style="color:var(--muted);margin:0 5px">–</span>${g.awayScore}</div>`;
+    scoreHtml = `<div class="score live-score">${g.homeScore}<span style="color:var(--muted);margin:0 8px">–</span>${g.awayScore}</div>`;
     timeHtml  = `<div class="game-time live-text">● AO VIVO · ${g.detail}</div>`;
   } else if(g.isDone){
-    scoreHtml = `<div class="score">${g.homeScore}<span style="color:var(--muted);margin:0 5px">–</span>${g.awayScore}</div>`;
+    scoreHtml = `<div class="score">${g.homeScore}<span style="color:var(--muted);margin:0 8px">–</span>${g.awayScore}</div>`;
     timeHtml  = `<div class="game-time finished-text">✓ Encerrado</div>`;
   } else {
-    scoreHtml = `<div class="score upcoming">${fmtDate(g.date)}<br>${fmtTime(g.date)}</div>`;
+    scoreHtml = `<div class="score upcoming">${fmtDate(g.date)}<br><span style="font-size:16px">${fmtTime(g.date)}</span></div>`;
     timeHtml  = `<div class="game-time">${fmtDate(g.date)} · ${fmtTime(g.date)}</div>`;
   }
-  return `<div class="${cls}">
-    <div class="team-left"><div class="team-flag">${flag(g.homeName)}</div><div class="team-name">${g.homeName}</div></div>
+  return `<div class="${finalCls}">
+    <div class="team-left"><div class="team-flag">${flag(g.homeName)}</div><div class="team-name">${pt(g.homeName)}</div></div>
     <div class="score-block">
       <div class="${gbCls}">${g.group}</div>
       ${scoreHtml}${timeHtml}
       <div class="game-venue">${g.venue}</div>
     </div>
-    <div class="team-right"><div class="team-flag">${flag(g.awayName)}</div><div class="team-name">${g.awayName}</div></div>
+    <div class="team-right"><div class="team-flag">${flag(g.awayName)}</div><div class="team-name">${pt(g.awayName)}</div></div>
   </div>`;
 }
 
@@ -382,21 +495,18 @@ function renderGames(){
 
   const shown = [...live,...done,...(live.length===0&&done.length===0?todayGames:[])];
   const liveEl = document.getElementById('live-games-list');
+  
   liveEl.innerHTML = shown.length
     ? shown.map(buildGameCard).join('')
-    : `<div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">
-        Nenhum jogo ao vivo agora.<br>
-        <span style="font-size:14px;margin-top:6px;display:block">${upcoming[0]?'Próximo: '+upcoming[0].homeName+' × '+upcoming[0].awayName+' · '+fmtDate(upcoming[0].date):''}</span>
+    : `<div class="empty-state">
+        A bola não está rolando no momento.<br>O Lango Torcedor está aquecendo para a próxima partida!
        </div>`;
 
   document.getElementById('upcoming-games-list').innerHTML = upcoming.length
     ? upcoming.map(buildGameCard).join('')
-    : `<div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Sem jogos agendados.</div>`;
+    : `<div class="empty-state">Sem jogos agendados para os próximos dias.</div>`;
 
   buildTicker([...live,...done.slice(0,6),...upcoming.slice(0,6)]);
-
-  const now = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('last-upd').textContent = 'atualizado '+now;
 }
 
 // ─── TICKER ───────────────────────────────────────────────────────────────────
@@ -407,9 +517,9 @@ function buildTicker(games){
     return;
   }
   const items = games.map(g=>{
-    if(g.isLive) return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${g.awayName} ${flag(g.awayName)}<span class="tl">● LIVE ${g.detail}</span></div>`;
-    if(g.isDone) return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${g.awayName} ${flag(g.awayName)} · ${g.group}</div>`;
-    return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">vs</span> ${g.awayName} ${flag(g.awayName)} · ${fmtDate(g.date)} ${fmtTime(g.date)}</div>`;
+    if(g.isLive) return `<div class="ticker-item">${flag(g.homeName)} ${pt(g.homeName)} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${pt(g.awayName)} ${flag(g.awayName)}<span class="tl">● LIVE ${g.detail}</span></div>`;
+    if(g.isDone) return `<div class="ticker-item">${flag(g.homeName)} ${pt(g.homeName)} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${pt(g.awayName)} ${flag(g.awayName)} · ${g.group}</div>`;
+    return `<div class="ticker-item">${flag(g.homeName)} ${pt(g.homeName)} <span class="ts">vs</span> ${pt(g.awayName)} ${flag(g.awayName)} · ${fmtDate(g.date)} ${fmtTime(g.date)}</div>`;
   });
   document.getElementById('ticker').innerHTML = [...items,...items].join('');
 }
@@ -449,7 +559,7 @@ function renderGroups(){
         const pc=i<2?'q':i===2?'third':'';
         const sgCls=sg>0?'sg-pos':sg<0?'sg-neg':'';
         return `<tr><td><span class="pos ${pc}">${i+1}</span></td>
-        <td class="left"><span class="flag-sm">${flag(t.name)}</span>${t.name}</td>
+        <td class="left"><span class="flag-sm">${flag(t.name)}</span>${pt(t.name)}</td>
         <td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td>
         <td class="${sgCls}">${t.j>0?sgStr:'—'}</td>
         <td class="pts">${t.pts}</td></tr>`;
@@ -487,21 +597,19 @@ async function loadData(){
   if(!ok) loadFallback();
   renderGames();
   renderGroups();
-  document.getElementById('loader')?.classList.add('hidden');
+  
+  setTimeout(() => {
+    document.getElementById('loader')?.classList.add('hidden');
+  }, 1000);
 }
 
 function loadFallback(){
   allGames=[
-    {date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:1,awayScore:0,state:'post',detail:'FT',isDone:true,isLive:false,isPre:false,group:'Grupo A',venue:'Cidade do México'},
-    {date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo C',venue:'Nova York/NJ'},
-    {date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto'},
-    {date:'2026-06-13T01:00:00Z',homeName:'United States',awayName:'Paraguay',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo D',venue:'Los Angeles'},
-    {date:'2026-06-14T17:00:00Z',homeName:'Germany',awayName:'Curaçao',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo E',venue:'Houston'},
-    {date:'2026-06-14T20:00:00Z',homeName:'Netherlands',awayName:'Japan',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo F',venue:'Dallas'},
-    {date:'2026-06-15T17:00:00Z',homeName:'France',awayName:'Senegal',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo I',venue:'Miami'},
-    {date:'2026-06-15T20:00:00Z',homeName:'Argentina',awayName:'Algeria',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo J',venue:'Dallas'},
-    {date:'2026-06-15T23:00:00Z',homeName:'Portugal',awayName:'Uzbekistan',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo K',venue:'Los Angeles'},
-    {date:'2026-06-16T17:00:00Z',homeName:'England',awayName:'Panama',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo L',venue:'San Francisco'},
+    {id:'br-ma', date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo C',venue:'Nova York/NJ', justScored: false},
+    {id:'mx-sa', date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:2,awayScore:1,state:'in',detail:'78\'',isDone:false,isLive:true,isPre:false,group:'Grupo A',venue:'Cidade do México', justScored: true},
+    {id:'ca-it', date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto', justScored: false},
+    {id:'us-pa', date:'2026-06-13T01:00:00Z',homeName:'United States',awayName:'Paraguay',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo D',venue:'Los Angeles', justScored: false},
+    {id:'ge-cu', date:'2026-06-14T17:00:00Z',homeName:'Germany',awayName:'Curaçao',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo E',venue:'Houston', justScored: false},
   ];
 }
 
@@ -520,10 +628,10 @@ function updateClock(){
 
 // ─── AUTO-SCROLL ──────────────────────────────────────────────────────────────
 class AutoScroller {
-  constructor(zoneId, contentId, speed=0.5, pauseMs=3000){
+  constructor(zoneId, contentId, speed=0.5, pauseMs=4000){
     this.zone    = document.getElementById(zoneId);
     this.content = document.getElementById(contentId);
-    this.speed   = speed;      // px per frame
+    this.speed   = speed;      
     this.pauseMs = pauseMs;
     this.y       = 0;
     this.paused  = false;
@@ -534,14 +642,8 @@ class AutoScroller {
     this.zone.addEventListener('mouseleave',()=>this.resume());
     this.loop();
   }
-  pause(){
-    this.paused=true;
-    clearTimeout(this.pauseTimer);
-  }
-  resume(){
-    clearTimeout(this.pauseTimer);
-    this.pauseTimer=setTimeout(()=>{this.paused=false;},600);
-  }
+  pause(){ this.paused=true; clearTimeout(this.pauseTimer); }
+  resume(){ clearTimeout(this.pauseTimer); this.pauseTimer=setTimeout(()=>{this.paused=false;},600); }
   loop(){
     this.raf=requestAnimationFrame(()=>this.loop());
     if(this.paused) return;
@@ -572,12 +674,12 @@ window.addEventListener('DOMContentLoaded',()=>{
   updateClock();
   setInterval(updateClock,1000);
   loadData();
-  setInterval(loadData, 60000);
+  
+  setInterval(loadData, 30000);
 
-  // inicia scrollers após render
   setTimeout(()=>{
-    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  0.45, 4000);
-    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 0.4,  4000);
+    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  0.6, 5000);
+    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 0.5, 5000);
   }, 2500);
 });
 </script>
