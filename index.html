@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copa do Mundo FIFA 2026 — Niagro Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Paleta Brasil / Niagro */
+  --gold:#FFDF00;--gold2:#F9A825;--green:#009B3A;--yellow:#FEDF00;
+  --red:#D4001F;
+  --bg:#031405;          /* Fundo principal Verde Escuro */
+  --card:#06210A;        /* Cards Verde Bandeira Escuro */
+  --card2:#0A3311;       /* Hover / Destaques */
+  --border:#134D1E;      /* Bordas em tom de folha */
+  --text:#F2F7F2;        /* Texto claro levemente esverdeado */
+  --muted:#8FBC8F;       /* Texto secundário verde suave */
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;flex-direction:column}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#031405 0%,#06210A 40%,#082B0E 100%);border-bottom:2px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:100px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,223,0,.1) 0%,transparent 70%);pointer-events:none}
+.hero-left{display:flex;align-items:center;gap:24px}
+.niagro-logo{width: 250px; height: 50px; object-fit: contain; filter: drop-shadow(0 0 6px rgba(255,255,255,0.1));}
+.trophy{font-size:50px;filter:drop-shadow(0 0 14px rgba(255,223,0,.45))}
+.title-block h1{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--gold);line-height:1;text-shadow:0 0 24px rgba(255,223,0,.25)}
+.title-block .sub{font-size:14px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.hero-right{display:flex;align-items:center;gap:20px}
+.live-badge{display:flex;align-items:center;gap:8px;background:rgba(212,0,31,.15);border:1px solid rgba(212,0,31,.3);border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600;color:#FF4444;letter-spacing:1px}
+.live-dot{width:10px;height:10px;border-radius:50%;background:#FF4444;animation:pulse 1.2s infinite}
+.api-status{font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid;letter-spacing:1px;cursor:pointer}
+.api-ok{color:#4CAF50;border-color:rgba(76,175,80,.3);background:rgba(76,175,80,.08)}
+.api-err{color:#FF6666;border-color:rgba(255,102,102,.3);background:rgba(255,102,102,.08)}
+.api-load{color:var(--muted);border-color:var(--border);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.clock{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;text-align:right}
+.date-str{font-size:14px;color:var(--muted);text-align:right;letter-spacing:1px;text-transform:uppercase}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+
+/* ── TICKER ── */
+.ticker-wrap{background:var(--card);border-bottom:1px solid var(--border);overflow:hidden;height:48px;display:flex;align-items:center;flex-shrink:0}
+.ticker-label{background:var(--gold);color:#031405;font-size:15px;font-weight:700;padding:0 20px;height:48px;display:flex;align-items:center;letter-spacing:1px;flex-shrink:0}
+.ticker-scroll{overflow:hidden;flex:1;height:48px;display:flex;align-items:center}
+.ticker-inner{display:flex;white-space:nowrap;animation:tickermove 90s linear infinite}
+.ticker-item{font-size:16px;color:var(--text);padding:0 40px;border-right:1px solid var(--border)}
+.ticker-item .ts{color:var(--gold);font-weight:600}
+.ticker-item .tl{color:#FF6666;font-size:13px;margin-left:6px;animation:pulse 2s infinite}
+@keyframes tickermove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── MAIN LAYOUT ── */
+.main{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;overflow:hidden}
+.left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.right-panel{display:flex;flex-direction:column;overflow:hidden}
+
+/* ── AUTO-SCROLL CONTAINERS ── */
+.scroll-zone{flex:1;overflow:hidden;position:relative}
+.scroll-content{will-change:transform}
+
+/* ── SECTION TITLE ── */
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);display:flex;align-items:center;gap:10px;padding:20px 24px 12px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.section-title .accent{width:4px;height:22px;background:linear-gradient(to bottom,var(--gold),var(--gold2));border-radius:2px}
+.section-title .upd{margin-left:auto;font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);letter-spacing:0}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 24px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+
+/* ── BRASIL HIGHLIGHT ── */
+.brazil-highlight{background:linear-gradient(135deg,#041C07,#06210A);border-bottom:1px solid rgba(255,223,0,.3);padding:16px 24px;flex-shrink:0}
+.brazil-header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.brazil-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:2px}
+.brazil-sub{font-size:14px;color:var(--text);margin-top:2px}
+.br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:14px}
+.br-fix{background:rgba(255,223,0,.08);border:1px solid rgba(255,223,0,.15);border-radius:8px;padding:10px 12px;text-align:center}
+.br-fix .opp{font-size:24px;margin-bottom:4px}
+.br-fix .opp-name{font-weight:600;font-size:15px}
+.br-fix .fix-date{color:var(--yellow);font-size:13px;margin-top:2px}
+.br-fix .fix-venue{color:var(--muted);font-size:12px;margin-top:2px}
+
+/* ── GAME CARDS ── */
+.games-list{padding:14px 24px}
+.game-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px}
+.game-card.live-game{border-color:rgba(212,0,31,.5);background:linear-gradient(135deg,#0A3311,#180A10)}
+.game-card.brazil-game{border-color:rgba(255,223,0,.4);background:linear-gradient(135deg,#06210A,#0A3311)}
+.game-card.finished{opacity:.8}
+.team-left{text-align:right}
+.team-right{text-align:left}
+.team-name{font-size:16px;font-weight:600;color:var(--text);margin-top:4px}
+.team-flag{font-size:28px;line-height:1}
+.score-block{text-align:center;min-width:100px}
+.score{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);letter-spacing:3px;line-height:1}
+.score.live-score{color:#FF9944}
+.score.upcoming{font-size:18px;color:var(--muted);letter-spacing:1px}
+.game-time{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:1px}
+.game-time.live-text{color:#FF6666;animation:pulse 2s infinite}
+.game-time.finished-text{color:#4CAF50}
+.game-venue{font-size:12px;color:var(--muted);margin-top:2px;opacity:.6}
+.group-badge{display:inline-block;background:rgba(255,223,0,.08);border:1px solid rgba(255,223,0,.2);color:var(--gold);font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:1px;margin-bottom:4px}
+.group-badge.brazil{background:rgba(255,223,0,.2);border-color:rgba(255,223,0,.5);color:#FFDF00}
+
+/* ── GROUPS GRID ── */
+.groups-wrap{padding:14px 24px;overflow:hidden}
+.groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.group-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:hidden}
+.group-header{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.standings-table{width:100%;border-collapse:collapse;font-size:15px}
+.standings-table th{color:var(--muted);font-weight:500;font-size:12px;letter-spacing:1px;text-align:center;padding:4px 6px;text-transform:uppercase}
+.standings-table th.left{text-align:left}
+.standings-table td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.standings-table td.left{text-align:left;font-weight:500}
+.standings-table tr:last-child td{border-bottom:none}
+.flag-sm{font-size:18px;margin-right:6px;vertical-align:middle}
+.pts{font-weight:700;color:var(--gold);font-size:16px}
+.pos{color:var(--muted);font-size:13px}
+.pos.q{color:#4CAF50}
+.pos.third{color:#FF9800}
+.sg-pos{color:#4CAF50}
+.sg-neg{color:#F44336}
+
+/* ── LOADING ── */
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(3,20,5,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .6s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.spinner{width:64px;height:64px;border:4px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--gold)}
+.loading-sub{font-size:15px;color:var(--muted);margin-top:10px;letter-spacing:1px}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-indicator{position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-title">COPA DO MUNDO 2026</div>
+  <div class="loading-sub" id="load-msg">Conectando...</div>
+</div>
+
+<div class="hero">
+  <div class="hero-left">
+    <img src="Niagro.png" alt="Niagro" class="niagro-logo" onerror="this.style.display='none'"> 
+    <div class="trophy">🏆</div>
+    <div class="title-block">
+      <h1>Copa do Mundo FIFA 2026</h1>
+      <div class="sub">Estados Unidos · México · Canadá &nbsp;|&nbsp; 11 Jun – 19 Jul 2026</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div id="api-status" class="api-status api-load" onclick="loadData()" title="Clique para atualizar">CARREGANDO</div>
+    <div class="live-badge"><div class="live-dot"></div>AO VIVO</div>
+    <div>
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="date-str" id="datestr">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">⚽ PLACAR AO VIVO</div>
+  <div class="ticker-scroll">
+    <div class="ticker-inner" id="ticker">
+      <div class="ticker-item">Buscando resultados ao vivo...</div>
+      <div class="ticker-item">Buscando resultados ao vivo...</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="left-panel">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">48</div><div class="stat-label">Seleções</div></div>
+      <div class="stat-card"><div class="stat-num">104</div><div class="stat-label">Jogos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-live">—</div><div class="stat-label">Ao Vivo</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-today">—</div><div class="stat-label">Hoje</div></div>
+    </div>
+
+    <div class="brazil-highlight">
+      <div class="brazil-header">
+        <div style="font-size:32px">🇧🇷</div>
+        <div>
+          <div class="brazil-title">Brasil — Grupo C</div>
+          <div class="brazil-sub">⭐ Rumo ao Hexa! · Cabeça de chave</div>
+        </div>
+      </div>
+      <div class="br-fixtures">
+        <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div><div class="fix-venue">Nova York/NJ</div></div>
+        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div><div class="fix-venue">—</div></div>
+        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div><div class="fix-venue">—</div></div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <div class="accent"></div>Jogos — Ao Vivo &amp; Hoje
+      <span class="upd" id="last-upd">—</span>
+    </div>
+
+    <div class="scroll-zone" id="left-scroll-zone">
+      <div class="scroll-content" id="left-scroll-content">
+        <div class="games-list" id="live-games-list">
+          <div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Buscando jogos...</div>
+        </div>
+
+        <div class="section-title" style="margin-top:8px">
+          <div class="accent"></div>Próximos Jogos
+        </div>
+        <div class="games-list" id="upcoming-games-list">
+          <div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Buscando agenda...</div>
+        </div>
+
+        <div style="height:80px"></div>
+      </div>
+      <div class="scroll-indicator"></div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="section-title">
+      <div class="accent"></div>Classificação dos Grupos
+    </div>
+    <div class="scroll-zone" id="right-scroll-zone">
+      <div class="scroll-content" id="right-scroll-content">
+        <div class="groups-wrap">
+          <div class="groups-grid" id="groups-grid">
+            <div style="color:var(--muted);font-size:16px;padding:20px 0;grid-column:1/-1;text-align:center">Buscando grupos...</div>
+          </div>
+        </div>
+        <div style="height:80px"></div>
+      </div>
+      <div class="scroll-indicator"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── FLAGS ───────────────────────────────────────────────────────────────────
+const FLAGS = {
+  'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czechia':'🇨🇿','Czech Republic':'🇨🇿',
+  'Canada':'🇨🇦','Qatar':'🇶🇦','Switzerland':'🇨🇭','Bosnia & Herzegovina':'🇧🇦','Bosnia and Herzegovina':'🇧🇦',
+  'Brazil':'🇧🇷','Morocco':'🇲🇦','Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'USA':'🇺🇸','United States':'🇺🇸','Paraguay':'🇵🇾','Australia':'🇦🇺','Türkiye':'🇹🇷','Turkey':'🇹🇷',
+  'Germany':'🇩🇪','Curaçao':'🇨🇼','Curacao':'🇨🇼',"Côte d'Ivoire":'🇨🇮','Ivory Coast':'🇨🇮','Ecuador':'🇪🇨',
+  'Netherlands':'🇳🇱','Japan':'🇯🇵','Tunisia':'🇹🇳','Sweden':'🇸🇪','Ukraine':'🇺🇦',
+  'Belgium':'🇧🇪','Egypt':'🇪🇬','Iran':'🇮🇷','New Zealand':'🇳🇿',
+  'Spain':'🇪🇸','Cabo Verde':'🇨🇻','Cape Verde':'🇨🇻','Saudi Arabia':'🇸🇦','Uruguay':'🇺🇾',
+  'France':'🇫🇷','Senegal':'🇸🇳','Iraq':'🇮🇶','Norway':'🇳🇴',
+  'Argentina':'🇦🇷','Algeria':'🇩🇿','Austria':'🇦🇹','Jordan':'🇯🇴',
+  'Portugal':'🇵🇹','DR Congo':'🇨🇩','Congo DR':'🇨🇩','Uzbekistan':'🇺🇿','Colombia':'🇨🇴',
+  'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦',
+  'Denmark':'🇩🇰','Italy':'🇮🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿'
+};
+const flag = n => FLAGS[n] || '🏳️';
+
+// ─── GRUPOS ESTÁTICOS ─────────────────────────────────────────────────────────
+const GROUPS_STATIC = [
+  {name:'A',teams:['Mexico','South Africa','South Korea','Czechia']},
+  {name:'B',teams:['Canada','Qatar','Switzerland','Bosnia & Herzegovina']},
+  {name:'C',teams:['Brazil','Morocco','Haiti','Scotland']},
+  {name:'D',teams:['United States','Paraguay','Australia','Türkiye']},
+  {name:'E',teams:['Germany','Curaçao',"Côte d'Ivoire",'Ecuador']},
+  {name:'F',teams:['Netherlands','Japan','Sweden','Tunisia']},
+  {name:'G',teams:['Belgium','Egypt','Iran','New Zealand']},
+  {name:'H',teams:['Spain','Cabo Verde','Saudi Arabia','Uruguay']},
+  {name:'I',teams:['France','Senegal','Iraq','Norway']},
+  {name:'J',teams:['Argentina','Algeria','Austria','Jordan']},
+  {name:'K',teams:['Portugal','DR Congo','Uzbekistan','Colombia']},
+  {name:'L',teams:['England','Croatia','Ghana','Panama']}
+];
+
+let allGames = [];
+let standingsData = {};
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function fmtTime(iso){
+  try{
+    return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'})+'h';
+  }catch(e){return '—'}
+}
+function fmtDate(iso){
+  try{
+    return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:'America/Sao_Paulo'});
+  }catch(e){return '—'}
+}
+
+// ─── PARSE ESPN ───────────────────────────────────────────────────────────────
+function parseGames(data){
+  allGames = [];
+  try{
+    (data?.events || []).forEach(ev => {
+      const comp = ev.competitions?.[0];
+      if(!comp) return;
+      const home = comp.competitors?.find(c=>c.homeAway==='home');
+      const away = comp.competitors?.find(c=>c.homeAway==='away');
+      if(!home||!away) return;
+      const state = comp.status?.type?.state || 'pre';
+      const detail = comp.status?.displayClock || comp.status?.type?.shortDetail || '';
+      const group = (ev.groups?.[0]?.name || '').replace(/Group\s*/i,'Grupo ');
+      allGames.push({
+        date: ev.date,
+        homeName: home.team?.displayName || home.team?.name || '',
+        awayName: away.team?.displayName || away.team?.name || '',
+        homeScore: parseInt(home.score||0),
+        awayScore: parseInt(away.score||0),
+        state, detail,
+        venue: comp.venue?.address?.city || comp.venue?.fullName || '',
+        group: group || 'Copa 2026',
+        isLive: state==='in',
+        isDone: state==='post',
+        isPre: state==='pre'
+      });
+    });
+  }catch(ex){console.error('parseGames',ex)}
+}
+
+function parseStandings(data){
+  standingsData = {};
+  try{
+    const secs = data?.standings?.groups || [];
+    secs.forEach(grp => {
+      const letter = (grp.header||grp.name||'').replace(/^Grupo?\s*/i,'').replace(/^Group\s*/i,'').trim();
+      if(!letter) return;
+      standingsData[letter] = (grp.standings||grp.entries||[]).map(e => ({
+        name: e.team?.displayName||e.team?.name||'',
+        pts: +((e.stats||[]).find(s=>s.name==='points')?.value||0),
+        j:   +((e.stats||[]).find(s=>s.name==='gamesPlayed')?.value||0),
+        v:   +((e.stats||[]).find(s=>s.name==='wins')?.value||0),
+        e:   +((e.stats||[]).find(s=>s.name==='ties')?.value||0),
+        d:   +((e.stats||[]).find(s=>s.name==='losses')?.value||0),
+        gp:  +((e.stats||[]).find(s=>s.name==='pointsFor'||s.name==='goalsFor')?.value||0),
+        gc:  +((e.stats||[]).find(s=>s.name==='pointsAgainst'||s.name==='goalsAgainst')?.value||0),
+      }));
+    });
+  }catch(ex){}
+}
+
+// ─── RENDER GAME CARD ─────────────────────────────────────────────────────────
+function buildGameCard(g){
+  const isBr = g.homeName==='Brazil'||g.awayName==='Brazil';
+  const cls = g.isLive?'game-card live-game':isBr?'game-card brazil-game':g.isDone?'game-card finished':'game-card';
+  const gbCls = isBr?'group-badge brazil':'group-badge';
+  let scoreHtml, timeHtml;
+  if(g.isLive){
+    scoreHtml = `<div class="score live-score">${g.homeScore}<span style="color:var(--muted);margin:0 5px">–</span>${g.awayScore}</div>`;
+    timeHtml  = `<div class="game-time live-text">● AO VIVO · ${g.detail}</div>`;
+  } else if(g.isDone){
+    scoreHtml = `<div class="score">${g.homeScore}<span style="color:var(--muted);margin:0 5px">–</span>${g.awayScore}</div>`;
+    timeHtml  = `<div class="game-time finished-text">✓ Encerrado</div>`;
+  } else {
+    scoreHtml = `<div class="score upcoming">${fmtDate(g.date)}<br>${fmtTime(g.date)}</div>`;
+    timeHtml  = `<div class="game-time">${fmtDate(g.date)} · ${fmtTime(g.date)}</div>`;
+  }
+  return `<div class="${cls}">
+    <div class="team-left"><div class="team-flag">${flag(g.homeName)}</div><div class="team-name">${g.homeName}</div></div>
+    <div class="score-block">
+      <div class="${gbCls}">${g.group}</div>
+      ${scoreHtml}${timeHtml}
+      <div class="game-venue">${g.venue}</div>
+    </div>
+    <div class="team-right"><div class="team-flag">${flag(g.awayName)}</div><div class="team-name">${g.awayName}</div></div>
+  </div>`;
+}
+
+// ─── RENDER JOGOS ─────────────────────────────────────────────────────────────
+function renderGames(){
+  const todayStr = new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
+  const live    = allGames.filter(g=>g.isLive);
+  const done    = allGames.filter(g=>g.isDone);
+  const todayGames = allGames.filter(g=>new Date(g.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===todayStr);
+  const upcoming   = allGames.filter(g=>g.isPre).slice(0,10);
+
+  document.getElementById('stat-live').textContent  = live.length;
+  document.getElementById('stat-today').textContent = todayGames.length;
+
+  const shown = [...live,...done,...(live.length===0&&done.length===0?todayGames:[])];
+  const liveEl = document.getElementById('live-games-list');
+  liveEl.innerHTML = shown.length
+    ? shown.map(buildGameCard).join('')
+    : `<div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">
+        Nenhum jogo ao vivo agora.<br>
+        <span style="font-size:14px;margin-top:6px;display:block">${upcoming[0]?'Próximo: '+upcoming[0].homeName+' × '+upcoming[0].awayName+' · '+fmtDate(upcoming[0].date):''}</span>
+       </div>`;
+
+  document.getElementById('upcoming-games-list').innerHTML = upcoming.length
+    ? upcoming.map(buildGameCard).join('')
+    : `<div style="color:var(--muted);font-size:16px;padding:20px 0;text-align:center">Sem jogos agendados.</div>`;
+
+  buildTicker([...live,...done.slice(0,6),...upcoming.slice(0,6)]);
+
+  const now = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('last-upd').textContent = 'atualizado '+now;
+}
+
+// ─── TICKER ───────────────────────────────────────────────────────────────────
+function buildTicker(games){
+  if(!games.length){
+    document.getElementById('ticker').innerHTML =
+      '<div class="ticker-item">🏆 Copa do Mundo FIFA 2026 — Em andamento · 48 seleções · 104 jogos</div>'.repeat(4);
+    return;
+  }
+  const items = games.map(g=>{
+    if(g.isLive) return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${g.awayName} ${flag(g.awayName)}<span class="tl">● LIVE ${g.detail}</span></div>`;
+    if(g.isDone) return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">${g.homeScore}–${g.awayScore}</span> ${g.awayName} ${flag(g.awayName)} · ${g.group}</div>`;
+    return `<div class="ticker-item">${flag(g.homeName)} ${g.homeName} <span class="ts">vs</span> ${g.awayName} ${flag(g.awayName)} · ${fmtDate(g.date)} ${fmtTime(g.date)}</div>`;
+  });
+  document.getElementById('ticker').innerHTML = [...items,...items].join('');
+}
+
+// ─── RENDER GRUPOS ────────────────────────────────────────────────────────────
+function renderGroups(){
+  const grid = document.getElementById('groups-grid');
+  grid.innerHTML = '';
+  GROUPS_STATIC.forEach(g=>{
+    let rows = standingsData[g.name];
+    if(!rows||!rows.length){
+      rows = g.teams.map(name=>({name,pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0}));
+      allGames.filter(m=>m.isDone||m.isLive).forEach(m=>{
+        const hi = rows.findIndex(r=>r.name===m.homeName||r.name.toLowerCase().startsWith(m.homeName.toLowerCase().slice(0,5)));
+        const ai = rows.findIndex(r=>r.name===m.awayName||r.name.toLowerCase().startsWith(m.awayName.toLowerCase().slice(0,5)));
+        if(hi<0||ai<0) return;
+        const h=rows[hi],a=rows[ai];
+        h.j++;a.j++;h.gp+=m.homeScore;h.gc+=m.awayScore;a.gp+=m.awayScore;a.gc+=m.homeScore;
+        if(m.homeScore>m.awayScore){h.v++;h.pts+=3;a.d++;}
+        else if(m.homeScore<m.awayScore){a.v++;a.pts+=3;h.d++;}
+        else{h.e++;h.pts++;a.e++;a.pts++;}
+      });
+    }
+    const sorted=[...rows].sort((a,b)=>b.pts-a.pts||(b.gp-b.gc)-(a.gp-a.gc)||b.gp-a.gp);
+    const card=document.createElement('div');
+    card.className='group-card';
+    card.innerHTML=`<div class="group-header">Grupo ${g.name}</div>
+    <table class="standings-table">
+      <thead><tr>
+        <th class="left" style="width:20px"></th>
+        <th class="left">Seleção</th>
+        <th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th><th style="color:#FFDF00">Pts</th>
+      </tr></thead>
+      <tbody>${sorted.map((t,i)=>{
+        const sg=t.gp-t.gc;
+        const sgStr=sg>0?'+'+sg:''+sg;
+        const pc=i<2?'q':i===2?'third':'';
+        const sgCls=sg>0?'sg-pos':sg<0?'sg-neg':'';
+        return `<tr><td><span class="pos ${pc}">${i+1}</span></td>
+        <td class="left"><span class="flag-sm">${flag(t.name)}</span>${t.name}</td>
+        <td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td>
+        <td class="${sgCls}">${t.j>0?sgStr:'—'}</td>
+        <td class="pts">${t.pts}</td></tr>`;
+      }).join('')}</tbody></table>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── API LOAD ─────────────────────────────────────────────────────────────────
+async function loadData(){
+  const statusEl = document.getElementById('api-status');
+  statusEl.className='api-status api-load';
+  statusEl.textContent='ATUALIZANDO';
+  const dd = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const urls = [
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dd}&limit=50`,
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=50`,
+  ];
+  let ok=false;
+  for(const url of urls){
+    try{
+      const r=await fetch(url);
+      if(!r.ok) continue;
+      const data=await r.json();
+      parseGames(data);
+      try{
+        const sr=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/standings');
+        if(sr.ok) parseStandings(await sr.json());
+      }catch(e){}
+      ok=true; break;
+    }catch(e){}
+  }
+  statusEl.className = ok?'api-status api-ok':'api-status api-err';
+  statusEl.textContent = ok?'ESPN ● AO VIVO':'DADOS LOCAIS';
+  if(!ok) loadFallback();
+  renderGames();
+  renderGroups();
+  document.getElementById('loader')?.classList.add('hidden');
+}
+
+function loadFallback(){
+  allGames=[
+    {date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:1,awayScore:0,state:'post',detail:'FT',isDone:true,isLive:false,isPre:false,group:'Grupo A',venue:'Cidade do México'},
+    {date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo C',venue:'Nova York/NJ'},
+    {date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto'},
+    {date:'2026-06-13T01:00:00Z',homeName:'United States',awayName:'Paraguay',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo D',venue:'Los Angeles'},
+    {date:'2026-06-14T17:00:00Z',homeName:'Germany',awayName:'Curaçao',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo E',venue:'Houston'},
+    {date:'2026-06-14T20:00:00Z',homeName:'Netherlands',awayName:'Japan',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo F',venue:'Dallas'},
+    {date:'2026-06-15T17:00:00Z',homeName:'France',awayName:'Senegal',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo I',venue:'Miami'},
+    {date:'2026-06-15T20:00:00Z',homeName:'Argentina',awayName:'Algeria',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo J',venue:'Dallas'},
+    {date:'2026-06-15T23:00:00Z',homeName:'Portugal',awayName:'Uzbekistan',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo K',venue:'Los Angeles'},
+    {date:'2026-06-16T17:00:00Z',homeName:'England',awayName:'Panama',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo L',venue:'San Francisco'},
+  ];
+}
+
+// ─── RELÓGIO ──────────────────────────────────────────────────────────────────
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=
+    String(now.getHours()).padStart(2,'0')+':'+
+    String(now.getMinutes()).padStart(2,'0')+':'+
+    String(now.getSeconds()).padStart(2,'0');
+  const days=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  const months=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  document.getElementById('datestr').textContent=
+    days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+}
+
+// ─── AUTO-SCROLL ──────────────────────────────────────────────────────────────
+class AutoScroller {
+  constructor(zoneId, contentId, speed=0.5, pauseMs=3000){
+    this.zone    = document.getElementById(zoneId);
+    this.content = document.getElementById(contentId);
+    this.speed   = speed;      // px per frame
+    this.pauseMs = pauseMs;
+    this.y       = 0;
+    this.paused  = false;
+    this.dir     = 1;
+    this.pauseTimer = null;
+    this.raf     = null;
+    this.zone.addEventListener('mouseenter',()=>this.pause());
+    this.zone.addEventListener('mouseleave',()=>this.resume());
+    this.loop();
+  }
+  pause(){
+    this.paused=true;
+    clearTimeout(this.pauseTimer);
+  }
+  resume(){
+    clearTimeout(this.pauseTimer);
+    this.pauseTimer=setTimeout(()=>{this.paused=false;},600);
+  }
+  loop(){
+    this.raf=requestAnimationFrame(()=>this.loop());
+    if(this.paused) return;
+    const maxY = this.content.scrollHeight - this.zone.clientHeight;
+    if(maxY<=10){this.y=0;this.content.style.transform='translateY(0)';return;}
+    this.y += this.speed * this.dir;
+    if(this.y >= maxY){
+      this.y = maxY;
+      this.dir=-1;
+      this.pause();
+      setTimeout(()=>{this.paused=false;},this.pauseMs);
+    }
+    if(this.y <= 0){
+      this.y=0;
+      this.dir=1;
+      this.pause();
+      setTimeout(()=>{this.paused=false;},this.pauseMs);
+    }
+    this.content.style.transform=`translateY(${-this.y}px)`;
+  }
+  reset(){this.y=0;this.content.style.transform='translateY(0)';}
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+let leftScroller, rightScroller;
+
+window.addEventListener('DOMContentLoaded',()=>{
+  updateClock();
+  setInterval(updateClock,1000);
+  loadData();
+  setInterval(loadData, 60000);
+
+  // inicia scrollers após render
+  setTimeout(()=>{
+    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  0.45, 4000);
+    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 0.4,  4000);
+  }, 2500);
+});
+</script>
+</body>
+</html>
