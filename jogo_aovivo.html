@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match Center Ao Vivo — Niagro Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#FFDF00; --gold2:#F9A825; --green:#009B3A; --yellow:#FEDF00;
+  --bg: rgba(2, 13, 4, 0.85);          
+  --card: rgba(6, 33, 10, 0.75); 
+  --border: rgba(255, 255, 255, 0.1); 
+  --text: #FFFFFF;        
+  --muted: #C8E6C9;       
+}
+html,body{height:100%; font-family:'Inter',sans-serif; color:var(--text);}
+body{
+  background: radial-gradient(circle at top, rgba(5, 43, 14, 0.85), rgba(2, 13, 4, 0.98)),
+              url('dashboard_background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── MARCA D'ÁGUA ── */
+.watermark { position: fixed; bottom: 12px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.4); z-index: 1000; pointer-events: none; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+/* ── HEADER DA PARTIDA ── */
+.match-header {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+.team-block { display: flex; align-items: center; gap: 20px; width: 30%; }
+.team-block.away { flex-direction: row-reverse; text-align: right; }
+.team-flag { font-size: 64px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+.team-info h2 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 2px; line-height: 1; text-transform: uppercase;}
+.team-info .form { font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: 1px; }
+
+.score-block { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.score-numbers { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); letter-spacing: 4px; line-height: 1; text-shadow: 0 0 20px rgba(255,223,0,0.4); }
+.match-status { background: #FF5555; color: white; font-weight: 800; font-size: 14px; padding: 4px 16px; border-radius: 20px; letter-spacing: 2px; margin-top: 8px; animation: pulse 2s infinite; box-shadow: 0 0 15px rgba(212,0,31,0.5); }
+.match-status.offline { background: #555; animation: none; box-shadow: none; }
+@keyframes pulse{0%,100%{transform:scale(1); opacity:1;}50%{transform:scale(1.05); opacity:0.8;}}
+
+/* ── LAYOUT PRINCIPAL (3 COLUNAS) ── */
+.main-grid { display: grid; grid-template-columns: 1.6fr 1.2fr 1fr; gap: 24px; padding: 20px 24px; flex: 1; overflow: hidden; }
+
+/* ── CARTÕES DE VIDRO GENÉRICOS ── */
+.glass-panel { background: var(--card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); position: relative;}
+.panel-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--gold); letter-spacing: 2px; padding: 12px 24px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; gap: 10px; z-index: 2;}
+.panel-content { padding: 16px; overflow-y: auto; flex: 1; z-index: 2;}
+.empty-state { text-align: center; color: var(--muted); padding: 30px; font-weight: 500; font-style: italic; }
+
+/* MINIATURA DO LANGO JUIZ */
+.thumb-title-container { display: flex; align-items: center; gap: 12px; }
+.lango-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #FF5555;
+  object-fit: cover;
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(255, 85, 85, 0.4);
+}
+
+/* ── ESCALAÇÃO LADO A LADO ── */
+.lineups-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; }
+.lineup-col { display: flex; flex-direction: column; }
+.lineup-col.away { border-left: 1px solid var(--border); padding-left: 20px; }
+.lineup-header { display: flex; align-items: center; gap: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; }
+.lineup-header .flag { font-size: 24px; }
+.lineup-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+.lineup-row:last-child { border-bottom: none; }
+.player-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); width: 28px; text-align: left; }
+.player-name { font-size: 14px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-pos { font-size: 11px; font-weight: 800; color: #000; background: var(--muted); padding: 2px 6px; border-radius: 4px; text-align: center; min-width: 32px;}
+.coach-box { margin-top: auto; padding-top: 12px; font-size: 13px; color: var(--gold); text-align: center; font-weight: 600; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 8px; }
+
+/* ── ESTATÍSTICAS (STATS) ── */
+.stat-item { margin-bottom: 20px; }
+.stat-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-bar-bg { background: rgba(0,0,0,0.4); height: 8px; border-radius: 4px; display: flex; overflow: hidden; }
+.stat-bar-home { background: var(--gold); height: 100%; transition: width 1s ease; }
+.stat-bar-away { background: #0055A4; height: 100%; transition: width 1s ease; } 
+
+/* ── LANCE A LANCE (PLAY-BY-PLAY) ── */
+.play-item { display: flex; gap: 16px; margin-bottom: 20px; position: relative; animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.play-time { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #FF5555; width: 55px; flex-shrink: 0; text-align: right; }
+.play-desc { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 16px; border-radius: 12px; flex: 1; font-size: 14px; line-height: 1.5; font-weight: 500; }
+.play-desc strong { color: var(--gold); }
+.play-item.goal .play-desc { border-color: var(--gold); background: rgba(255,223,0,0.1); box-shadow: 0 0 20px rgba(255,223,0,0.2); }
+.play-item.goal .play-time { color: var(--gold); animation: pulse 1.5s infinite; }
+.play-item.card .play-desc { border-color: #FF8800; background: rgba(255, 136, 0, 0.05); }
+
+/* ── APRESENTAÇÃO DE API ATIVA ── */
+.api-badge { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 10px; letter-spacing: 1px; }
+.api-espn { background: rgba(212,0,31,0.2); color: #FF5555; border: 1px solid rgba(212,0,31,0.4); }
+.api-fallback { background: rgba(255,223,0,0.2); color: var(--gold); border: 1px solid rgba(255,223,0,0.4); }
+
+/* Scrollbar invisível */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+/* ── RESPONSIVIDADE ── */
+@media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr 1fr; } .glass-panel:nth-child(3) { grid-column: span 2; } }
+@media (max-width: 768px) {
+  body { overflow: auto; }
+  .match-header { flex-direction: column; gap: 16px; padding: 20px; text-align: center; }
+  .team-block, .team-block.away { width: 100%; justify-content: center; flex-direction: row; text-align: left; }
+  .main-grid { display: flex; flex-direction: column; overflow: visible; }
+  .glass-panel { max-height: none; overflow: visible; }
+  .lineups-container { grid-template-columns: 1fr; }
+  .lineup-col.away { border-left: none; border-top: 2px solid var(--gold); padding-left: 0; padding-top: 20px; margin-top: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="watermark">Desenvolvido por Luciano Suzuki</div>
+
+<div class="match-header" id="match-header">
+  <h2 style="color: var(--gold); text-align: center; width: 100%;">Procurando jogo ao vivo...</h2>
+</div>
+
+<div class="main-grid">
+  <div class="glass-panel">
+    <div class="panel-title">
+      <span>📋 Titulares em Campo</span>
+      <span class="api-badge" id="api-indicator">A DETETAR...</span>
+    </div>
+    <div class="panel-content" id="lineups-panel">
+      <div class="empty-state">Aguardando dados das equipes...</div>
+    </div>
+  </div>
+
+  <div class="glass-panel" style="background: rgba(10, 45, 15, 0.85); border-color: rgba(255,255,255,0.2);">
+    <div class="panel-title" style="color: #FF5555;">
+      <div class="thumb-title-container">
+        <img src="lango_juiz.png" alt="Lango Juiz" class="lango-thumb" typeof="image/png" onerror="this.style.display='none'">
+        <span>🔥 Tempo Real</span>
+      </div>
+    </div>
+    <div class="panel-content" id="play-by-play">
+      <div class="empty-state">Aguardando lances da partida...</div>
+    </div>
+  </div>
+
+  <div class="glass-panel">
+    <div class="panel-title">📊 Estatísticas</div>
+    <div class="panel-content" id="match-stats">
+      <div class="empty-state">Estatísticas em processamento...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DICIONÁRIO E FLAGS PT-BR ───
+const FLAGS = { 'Mexico':'🇲🇽','Brazil':'🇧🇷','Morocco':'🇲🇦','Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','France':'🇫🇷','Argentina':'🇦🇷','Germany':'🇩🇪','Croatia':'🇭🇷', 'Colombia':'🇨🇴', 'Uruguay':'🇺🇾', 'Spain':'🇪🇸', 'Portugal':'🇵🇹', 'Ecuador':'🇪🇨' };
+const flag = n => FLAGS[n] || '🏳️';
+const NOME_PT = { 'Mexico':'México','Brazil':'Brasil','Morocco':'Marrocos','Haiti':'Haiti','Scotland':'Escócia','France':'França','Argentina':'Argentina','Germany':'Alemanha','Croatia':'Croácia', 'Colombia':'Colômbia', 'Uruguay':'Uruguai', 'Spain':'Espanha', 'Portugal':'Portugal', 'Ecuador':'Equador'};
+const pt = n => NOME_PT[n] || n || 'Equipe';
+
+const POS_PT = { 'G': 'GOL', 'GK': 'GOL', 'D': 'DEF', 'CB': 'ZAG', 'LB': 'LE', 'RB': 'LD', 'LWB': 'ALE', 'RWB': 'ALD', 'M': 'MEI', 'CM': 'VOL', 'CDM': 'VOL', 'CAM': 'MEI', 'RM': 'MD', 'LM': 'ME', 'F': 'ATA', 'ST': 'ATA', 'RW': 'PD', 'LW': 'PE', 'CF': 'ATA', 'S': 'RES', 'SUB': 'RES' };
+
+const STAT_PT = { 'possessionPct': 'Posse de Bola (%)', 'totalShots': 'Finalizações', 'shotsOnTarget': 'Chutes no Gol', 'foulsCommitted': 'Faltas Cometidas', 'corners': 'Escanteios', 'yellowCards': 'Cartões Amarelos', 'redCards': 'Cartões Vermelhos', 'saves': 'Defesas do Goleiro', 'offsides': 'Impedimentos' };
+
+// ─── NOVO CAÇADOR DE TREINADORES (RESOLVE O NÃO DIVULGADO) ───
+function getCoachName(rosterData, competitorData, boxscoreData) {
+  // Puxa o objeto do treinador da gaveta que o contiver
+  let c = rosterData?.coach?.[0] || rosterData?.coaches?.[0] || 
+          boxscoreData?.coaches?.[0] || 
+          competitorData?.team?.manager || competitorData?.team?.coach;
+          
+  if (!c) return 'Não divulgado';
+
+  // Desmonta o objeto usando as variáveis mais comuns da ESPN
+  return c.displayName || c.fullName || c.shortName || c.name || 
+         (c.firstName ? `${c.firstName} ${c.lastName || ''}`.trim() : 'Não divulgado');
+}
+
+// ─── NOVO CAÇADOR DE MINUTOS (RESOLVE O [object Object]) ───
+function getPlayTime(play) {
+  // Se for direto um texto (Ex: "45'")
+  if (typeof play.clock === 'string') return play.clock;
+  if (typeof play.time === 'string') return play.time;
+  
+  // Se for um objeto complexo (Isto é o que causava o [object Object])
+  if (play.clock?.displayValue) return play.clock.displayValue;
+  if (play.clock?.displayClock) return play.clock.displayClock;
+  if (play.time?.displayValue) return play.time.displayValue;
+  
+  // Em alguns casos, a ESPN manda apenas "minute: 45"
+  if (play.minute) return play.minute + "'";
+  
+  // Para tempos extras como Intervalo (HT)
+  if (play.period?.displayValue) return play.period.displayValue;
+  
+  return "-'";
+}
+
+// ─── TRADUTOR DE LANCES (Inglês -> PT-BR) ───
+function traduzirLance(texto) {
+  if(!texto) return '';
+  let t = texto;
+  t = t.replace(/Goal!/gi, 'GOL!');
+  t = t.replace(/Goal/g, 'Gol');
+  t = t.replace(/Assist by/gi, 'Assistência de');
+  t = t.replace(/with a cross/gi, 'com um cruzamento');
+  t = t.replace(/with a through ball/gi, 'com um passe em profundidade');
+  t = t.replace(/Header/gi, 'Cabeceio');
+  t = t.replace(/Penalty/gi, 'Pênalti');
+  t = t.replace(/Foul by/gi, 'Falta cometida por');
+  t = t.replace(/Foul/gi, 'Falta');
+  t = t.replace(/won a free kick/gi, 'sofreu uma falta');
+  t = t.replace(/Yellow Card/gi, 'Cartão Amarelo para');
+  t = t.replace(/Red Card/gi, 'Cartão Vermelho para');
+  t = t.replace(/Hand ball/gi, 'Toque de mão de');
+  t = t.replace(/VAR Decision:/gi, 'Decisão do VAR:');
+  t = t.replace(/Attempt saved/gi, 'Finalização defendida');
+  t = t.replace(/Attempt missed/gi, 'Finalização para fora');
+  t = t.replace(/Shot/gi, 'Finalização');
+  t = t.replace(/Missed/gi, 'Para fora');
+  t = t.replace(/Saved/gi, 'Defesa');
+  t = t.replace(/hit the bar/gi, 'acertou na trave');
+  t = t.replace(/hit the right post/gi, 'acertou na trave direita');
+  t = t.replace(/hit the left post/gi, 'acertou na trave esquerda');
+  t = t.replace(/from outside the box/gi, 'de fora da área');
+  t = t.replace(/from the center of the box/gi, 'do meio da área');
+  t = t.replace(/Substitution/gi, 'Substituição');
+  t = t.replace(/replaces/gi, 'entra no lugar de');
+  t = t.replace(/Offside/gi, 'Impedimento');
+  t = t.replace(/Corner/gi, 'Escanteio');
+  t = t.replace(/conceded by/gi, 'concedido por');
+  t = t.replace(/Match ends/gi, 'Fim de jogo');
+  t = t.replace(/Half time/gi, 'Intervalo');
+  return t;
+}
+
+// ─── LÓGICA PRINCIPAL DA API (ESPN) ───
+let currentLiveEventId = null;
+
+async function fetchMatchData() {
+  try {
+    const scoreRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard');
+    if (!scoreRes.ok) throw new Error("ESPN HTTP Error");
+    
+    const scoreData = await scoreRes.json();
+    
+    let liveEvents = scoreData.events?.filter(e => e.competitions?.[0]?.status?.type?.state === 'in') || [];
+    let selectedEvent = null;
+
+    if (liveEvents.length > 0) {
+        selectedEvent = liveEvents.find(e => e.name.includes("Brazil")) || liveEvents[0];
+    } else {
+        selectedEvent = scoreData.events?.[0]; 
+    }
+
+    if (!selectedEvent) throw new Error("Sem eventos na ESPN");
+    
+    const summaryRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${selectedEvent.id}`);
+    if (!summaryRes.ok) throw new Error("ESPN Summary Error");
+    
+    const summaryData = await summaryRes.json();
+    setApiBadge('api-espn', 'DADOS REAIS (ESPN AO VIVO)');
+    
+    renderHeader(summaryData.header);
+    
+    if(summaryData.rosters && summaryData.rosters.length >= 2) {
+       renderTwoLineups(summaryData.rosters, summaryData.header, summaryData.boxscore);
+    } else {
+       document.getElementById('lineups-panel').innerHTML = "<div class='empty-state'>As escalações oficiais ainda não foram divulgadas.</div>";
+    }
+
+    if(summaryData.boxscore && summaryData.boxscore.teams) {
+       renderStats(summaryData.boxscore);
+    } else {
+       document.getElementById('match-stats').innerHTML = "<div class='empty-state'>Estatísticas a serem processadas...</div>";
+    }
+    
+    let plays = summaryData.commentary || summaryData.keyEvents || summaryData.plays || [];
+    
+    if (plays.length === 0 && selectedEvent) {
+      const hTeam = pt(selectedEvent.competitions[0].competitors.find(c=>c.homeAway==='home')?.team?.name || 'Mandante');
+      const aTeam = pt(selectedEvent.competitions[0].competitors.find(c=>c.homeAway==='away')?.team?.name || 'Visitante');
+      
+      plays = [
+        { clock: { displayClock: "Info" }, type: { text: "Update" }, text: `A transmissão oficial da ESPN não está fornecendo texto detalhado para esta partida.` },
+        { clock: { displayClock: "Agora" }, type: { text: "Update" }, text: `Acompanhe o duelo entre ${hTeam} e ${aTeam} pelas estatísticas laterais!` }
+      ];
+    }
+
+    renderPlays(plays);
+
+  } catch (error) {
+    console.error("Falha na API da ESPN. Acionando Fallback...", error);
+    renderMockData();
+  }
+}
+
+// ─── FUNÇÕES DE RENDERIZAÇÃO BLINDADAS ───
+function setApiBadge(className, text) {
+    const badge = document.getElementById('api-indicator');
+    if (badge) { badge.className = `api-badge ${className}`; badge.textContent = text; }
+}
+
+function renderHeader(headerData) {
+  if (!headerData || !headerData.competitions) return;
+  const comp = headerData.competitions[0];
+  
+  const home = comp?.competitors?.find(c => c.homeAway === 'home') || comp?.competitors?.[0] || {};
+  const away = comp?.competitors?.find(c => c.homeAway === 'away') || comp?.competitors?.[1] || {};
+  
+  const homeName = home?.team?.name || 'Casa';
+  const awayName = away?.team?.name || 'Visitante';
+  const homeForm = home?.formation || 'Oculta';
+  const awayForm = away?.formation || 'Oculta';
+  
+  const state = comp?.status?.type?.state;
+  const clockInfo = comp?.status?.displayClock || comp?.status?.type?.detail || "Em Breve";
+  
+  let statusHTML = '';
+  if (state === 'in') statusHTML = `<div class="match-status">● AO VIVO - ${clockInfo}</div>`;
+  else if (state === 'post') statusHTML = `<div class="match-status offline">Encerrado</div>`;
+  else statusHTML = `<div class="match-status offline">Agendado</div>`;
+
+  document.getElementById('match-header').innerHTML = `
+    <div class="team-block">
+      <div class="team-flag">${flag(homeName)}</div>
+      <div class="team-info"><h2>${pt(homeName)}</h2><div class="form">Tática: ${homeForm}</div></div>
+    </div>
+    <div class="score-block">
+      <div class="score-numbers">${home?.score || 0} - ${away?.score || 0}</div>
+      ${statusHTML}
+    </div>
+    <div class="team-block away">
+      <div class="team-flag">${flag(awayName)}</div>
+      <div class="team-info"><h2>${pt(awayName)}</h2><div class="form">Tática: ${awayForm}</div></div>
+    </div>
+  `;
+}
+
+function generateLineupHTML(rosterData, competitorData, boxscoreData) {
+  if (!rosterData || !rosterData.roster) return '';
+  let html = '';
+  
+  let titulares = rosterData.roster.filter(p => p.starter === true);
+  if (titulares.length === 0) titulares = rosterData.roster.slice(0, 11);
+
+  titulares.forEach(p => {
+    const posStr = p.position?.abbreviation || p.athlete?.position?.abbreviation || 'S';
+    const posBR = POS_PT[posStr.toUpperCase()] || posStr;
+    const jersey = p.jersey || p.athlete?.jersey || '-';
+    const name = p.athlete?.displayName || p.athlete?.shortName || p.name || 'Jogador';
+
+    html += `
+      <div class="lineup-row">
+        <div class="player-num">${jersey}</div>
+        <div class="player-name">${name}</div>
+        <div class="player-pos">${posBR}</div>
+      </div>
+    `;
+  });
+  
+  const coachName = getCoachName(rosterData, competitorData, boxscoreData);
+  html += `<div class="coach-box">Treinador: ${coachName}</div>`;
+  return html;
+}
+
+function renderTwoLineups(rosters, header, boxscore) {
+  const homeTeam = header?.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home');
+  const awayTeam = header?.competitions?.[0]?.competitors?.find(c => c.homeAway === 'away');
+  
+  const homeRoster = rosters.find(r => r.team?.name === homeTeam?.team?.name) || rosters[0]; 
+  const awayRoster = rosters.find(r => r.team?.name === awayTeam?.team?.name) || rosters[1];
+
+  const homeBoxData = boxscore?.teams?.find(t => t.team?.name === homeTeam?.team?.name);
+  const awayBoxData = boxscore?.teams?.find(t => t.team?.name === awayTeam?.team?.name);
+
+  const html = `
+    <div class="lineups-container">
+      <div class="lineup-col">
+        <div class="lineup-header">
+           <span class="flag">${flag(homeRoster?.team?.name)}</span> ${pt(homeRoster?.team?.name)}
+        </div>
+        ${generateLineupHTML(homeRoster, homeTeam, homeBoxData)}
+      </div>
+      <div class="lineup-col away">
+        <div class="lineup-header">
+           <span class="flag">${flag(awayRoster?.team?.name)}</span> ${pt(awayRoster?.team?.name)}
+        </div>
+        ${generateLineupHTML(awayRoster, awayTeam, awayBoxData)}
+      </div>
+    </div>
+  `;
+  document.getElementById('lineups-panel').innerHTML = html;
+}
+
+function renderStats(boxscore) {
+  const homeStats = boxscore.teams?.[0]?.statistics || [];
+  const awayStats = boxscore.teams?.[1]?.statistics || [];
+  let html = '';
+
+  ['possessionPct', 'totalShots', 'shotsOnTarget', 'foulsCommitted', 'corners'].forEach(key => {
+    const hs = homeStats.find(s => s.name === key)?.displayValue || '0';
+    const as = awayStats.find(s => s.name === key)?.displayValue || '0';
+    
+    const hNum = parseFloat(hs) || 0;
+    const aNum = parseFloat(as) || 0;
+    const total = hNum + aNum;
+    const hPct = total === 0 ? 50 : (hNum / total) * 100;
+    const aPct = total === 0 ? 50 : (aNum / total) * 100;
+
+    html += `
+      <div class="stat-item">
+        <div class="stat-header">
+          <span style="color:var(--gold)">${hs}</span>
+          <span>${STAT_PT[key] || key}</span>
+          <span style="color:#66B2FF">${as}</span>
+        </div>
+        <div class="stat-bar-bg">
+          <div class="stat-bar-home" style="width: ${hPct}%"></div>
+          <div class="stat-bar-away" style="width: ${aPct}%"></div>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('match-stats').innerHTML = html;
+}
+
+function renderPlays(plays) {
+  if (!plays || plays.length === 0) {
+    document.getElementById('play-by-play').innerHTML = "<div class='empty-state'>Resumo lance a lance indisponível neste momento.</div>";
+    return;
+  }
+
+  let html = '';
+  // Se for lances gerados pela gente, não inverte. Se for da ESPN, inverte.
+  const lances = plays[0].clock?.displayClock === 'Agora' || plays[0].clock?.displayClock === 'Info' ? plays : [...plays].reverse();
+  
+  lances.slice(0, 10).forEach(play => {
+    const playType = play.type?.text?.toLowerCase() || '';
+    const isGoal = playType.includes('goal');
+    const isCard = playType.includes('card');
+    
+    let text = traduzirLance(play.text || play.shortText || 'Lance em andamento...');
+    
+    let goalClass = '';
+    if(isGoal) {
+        text = text.replace(/GOL|Goal/i, '<strong>⚽ GOL</strong>');
+        goalClass = 'goal';
+    } else if (isCard) {
+        goalClass = 'card';
+    }
+    
+    if(playType.includes('yellow')) text = '🟨 ' + text;
+    if(playType.includes('red')) text = '🟥 ' + text;
+
+    // A mágica acontece aqui: usamos a nova função para puxar o minuto exato
+    const exactTime = getPlayTime(play);
+
+    html += `
+      <div class="play-item ${goalClass}">
+        <div class="play-time">${exactTime}</div>
+        <div class="play-desc">${text}</div>
+      </div>
+    `;
+  });
+  document.getElementById('play-by-play').innerHTML = html;
+}
+
+// ─── FALLBACK EM CASO DE ERRO ───
+function renderMockData() {
+  setApiBadge('api-fallback', 'MODO OFFLINE (SIMULAÇÃO)');
+  const data = {
+    header: { competitions: [{ status: { displayClock: "82'", type: { state: "in", detail: "2º Tempo" } }, competitors: [ { homeAway: "home", team: { name: "Brazil" }, score: "2", formation: "4-2-3-1" }, { homeAway: "away", team: { name: "France" }, score: "1", formation: "4-3-3" } ] }] },
+    rosters: [
+      { team: { name: "Brazil" }, coach: [{ firstName: "Dorival", lastName: "Júnior" }], roster: [ { starter: true, jersey: "1", athlete: { displayName: "Alisson", position: { abbreviation: "GK" } } }, { starter: true, jersey: "7", athlete: { displayName: "Vini Jr.", position: { abbreviation: "LW" } } } ] },
+      { team: { name: "France" }, coach: [{ firstName: "Didier", lastName: "Deschamps" }], roster: [ { starter: true, jersey: "10", athlete: { displayName: "Mbappé", position: { abbreviation: "ST" } } } ] }
+    ],
+    boxscore: { teams: [ { team: { name: "Brazil" }, statistics: [{ name: "possessionPct", displayValue: "58" }] }, { team: { name: "France" }, statistics: [{ name: "possessionPct", displayValue: "42" }] } ] },
+    plays: [ { clock: { displayClock: "76'" }, type: { text: "Goal" }, text: "Goal! Vini Jr. scores an amazing goal!" }, { clock: { displayClock: "82'" }, type: { text: "Foul" }, text: "Foul by Camavinga on Bruno Guimarães." } ]
+  };
+  
+  renderHeader(data.header);
+  renderTwoLineups(data.rosters, data.header, data.boxscore);
+  renderStats(data.boxscore);
+  renderPlays(data.plays);
+}
+
+window.onload = () => {
+  fetchMatchData();
+  setInterval(fetchMatchData, 30000); 
+};
+</script>
+</body>
+</html>
