@@ -551,6 +551,7 @@ function buildTicker(games){
 }
 
 // ─── RENDER GRUPOS ────────────────────────────────────────────────────────────
+
 function renderGroups(){
   const grid = document.getElementById('groups-grid');
   grid.innerHTML = '';
@@ -559,8 +560,11 @@ function renderGroups(){
     if(!rows||!rows.length){
       rows = g.teams.map(name=>({name,pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0}));
       allGames.filter(m=>m.isDone||m.isLive).forEach(m=>{
-        const hi = rows.findIndex(r=>r.name===m.homeName||r.name.toLowerCase().startsWith(m.homeName.toLowerCase().slice(0,5)));
-        const ai = rows.findIndex(r=>r.name===m.awayName||r.name.toLowerCase().startsWith(m.awayName.toLowerCase().slice(0,5)));
+        
+        // CORREÇÃO: Compara usando o nome exato em Português gerado pelo dicionário pt()
+        const hi = rows.findIndex(r => pt(r.name) === pt(m.homeName));
+        const ai = rows.findIndex(r => pt(r.name) === pt(m.awayName));
+        
         if(hi<0||ai<0) return;
         const h=rows[hi],a=rows[ai];
         h.j++;a.j++;h.gp+=m.homeScore;h.gc+=m.awayScore;a.gp+=m.awayScore;a.gc+=m.homeScore;
@@ -593,7 +597,6 @@ function renderGroups(){
     grid.appendChild(card);
   });
 }
-
 // ─── API LOAD ─────────────────────────────────────────────────────────────────
 async function loadData(){
   const statusEl = document.getElementById('api-status');
