@@ -11,15 +11,15 @@
 :root{
   /* Paleta Brasil / Niagro */
   --gold:#FFDF00; --gold2:#F9A825; --green:#009B3A; --yellow:#FEDF00;
-  --bg: rgba(2, 13, 4, 0.85); /* Fundo translúcido para o estádio */         
-  --card: rgba(6, 33, 10, 0.65); /* Efeito de vidro escurecido */
+  --bg: rgba(2, 13, 4, 0.85);          
+  --card: rgba(6, 33, 10, 0.65); 
   --border: rgba(255, 255, 255, 0.08); 
   --text: #FFFFFF;        
   --muted: #C8E6C9;       
 }
 html,body{height:100%;overflow:hidden}
 body{
-  /* Fundo Imersivo do Estádio */
+  /* Fundo Imersivo do Estádio atualizado para .jpg */
   background: radial-gradient(circle at top left, rgba(5, 43, 14, 0.8), rgba(2, 13, 4, 0.95)),
               url('dashboard_background.jpg') no-repeat center center fixed;
   background-size: cover;
@@ -74,7 +74,7 @@ body{
 .ticker-item .tl{color:#FF5555;font-size:13px;font-weight:700;margin-left:8px;animation:pulse 2s infinite}
 @keyframes tickermove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── MAIN LAYOUT (Menor margem) ── */
+/* ── MAIN LAYOUT ── */
 .main{display:grid;grid-template-columns:1.2fr 1fr;flex:1;min-height:0;overflow:hidden; gap: 16px; padding: 16px;}
 .left-panel{display:flex;flex-direction:column;overflow:hidden; gap: 12px;}
 .right-panel{display:flex;flex-direction:column;overflow:hidden;}
@@ -83,43 +83,45 @@ body{
 .scroll-zone{flex:1;overflow:hidden;position:relative; mask-image: linear-gradient(to bottom, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);}
 .scroll-content{will-change:transform}
 
-/* ── SECTION TITLE (Menor) ── */
+/* ── SECTION TITLE ── */
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);display:flex;align-items:center;gap:10px;padding:6px 0 10px;flex-shrink:0; border-bottom: 1px solid var(--border); margin-bottom: 12px;}
 .section-title .accent{width:5px;height:22px;background:linear-gradient(to bottom,var(--gold),var(--gold2));border-radius:3px}
 
-/* ── STATS ROW (Compacto) ── */
+/* Título de Jogos Ao Vivo Ganha Destaque */
+.section-title.live-focus {
+  font-size: 28px;
+  color: #FF5555;
+  border-bottom: 2px solid rgba(212,0,31,.3);
+  text-shadow: 0 0 15px rgba(212,0,31,0.4);
+}
+.section-title.live-focus .accent {
+  background: #FF5555;
+}
+
+/* ── STATS ROW ── */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex-shrink:0;}
 .stat-card{background:var(--card); backdrop-filter: blur(12px); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center; box-shadow: 0 4px 16px rgba(0,0,0,0.2);}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1; text-shadow: 0 2px 5px rgba(255,223,0,0.2);}
 .stat-label{font-size:11px;font-weight: 600;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 
-/* ── BRASIL HIGHLIGHT (Compacto) ── */
+/* ── BRASIL HIGHLIGHT (AGORA DISCRETO) ── */
 .brazil-highlight{
-  background:linear-gradient(135deg, rgba(0, 155, 58, 0.2), rgba(0,0,0,0.5)), url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 L100,100 M100,0 L0,100" stroke="rgba(255,223,0,0.05)" stroke-width="2"/></svg>');
+  background: rgba(0, 0, 0, 0.2); /* Fundo super discreto */
   backdrop-filter: blur(8px);
-  border:1px solid rgba(255,223,0,.3);
+  border: 1px solid var(--border); /* Borda padrão, sem brilho */
   border-radius: 12px;
-  padding:12px 16px;
-  flex-shrink:0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
+  padding: 10px 16px; /* Menor volume */
+  flex-shrink: 0;
+  margin-bottom: 4px;
 }
-.brazil-highlight::after {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(255,223,0,0.15) 0%, transparent 60%);
-  pointer-events: none;
-}
-.brazil-header{display:flex;align-items:center;gap:10px;margin-bottom:8px; position: relative; z-index: 2;}
-.brazil-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-.brazil-sub{font-size:13px;color:var(--text);margin-top:2px; font-weight: 500;}
-.br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px; position: relative; z-index: 2;}
-.br-fix{background:rgba(255,255,255,.08); backdrop-filter: blur(6px); border:1px solid rgba(255,223,0,.2);border-radius:8px;padding:8px;text-align:center; transition: transform 0.3s;}
-.br-fix:hover {transform: translateY(-2px);}
-.br-fix .opp{font-size:20px;margin-bottom:2px}
-.br-fix .opp-name{font-weight:700;font-size:13px; text-transform: uppercase;}
-.br-fix .fix-date{color:var(--yellow);font-size:12px;margin-top:2px; font-weight: 600;}
-.br-fix .fix-venue{color:var(--muted);font-size:11px;margin-top:2px}
+.brazil-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.brazil-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);letter-spacing:1px;}
+.brazil-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px; font-weight: 500;}
+.br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.br-fix{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:6px;text-align:center;}
+.br-fix .opp{font-size:16px;margin-bottom:2px}
+.br-fix .opp-name{font-weight:600;font-size:11px; color:var(--muted); text-transform: uppercase;}
+.br-fix .fix-date{color:var(--text);font-size:11px;margin-top:2px; font-weight: 600;}
 
 /* ── GAME CARDS (Vidro) ── */
 .games-list{display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px;}
@@ -136,13 +138,22 @@ body{
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   transition: all 0.3s ease;
 }
-.game-card.live-game{border-color:rgba(212,0,31,.5); background:linear-gradient(135deg, rgba(10,51,17,0.85), rgba(24,10,16,0.85)); box-shadow: 0 4px 20px rgba(212,0,31,0.2);}
+
+/* Jogo ao Vivo Agora Salta aos Olhos */
+.game-card.live-game{
+  border: 2px solid #FF5555;
+  background: linear-gradient(135deg, rgba(212,0,31,0.15), rgba(10,51,17,0.9));
+  box-shadow: 0 0 25px rgba(212,0,31,0.25);
+  transform: scale(1.02);
+  margin: 10px 14px 20px 14px; /* Margem extra para acomodar o scale e não cortar no scroll */
+}
+
 .game-card.brazil-game{border-color:rgba(255,223,0,.4); background:linear-gradient(135deg, rgba(6,33,10,0.85), rgba(10,51,17,0.85));}
 .game-card.finished{opacity:.85; box-shadow: none;}
 
 @keyframes flash-goal {
   0% { box-shadow: 0 0 0px rgba(255, 223, 0, 0); background: var(--card); }
-  20% { box-shadow: 0 0 30px rgba(255, 223, 0, 0.8); background: rgba(255, 223, 0, 0.15); transform: scale(1.02); }
+  20% { box-shadow: 0 0 30px rgba(255, 223, 0, 0.8); background: rgba(255, 223, 0, 0.15); transform: scale(1.04); }
   100% { box-shadow: 0 4px 20px rgba(0,0,0,0.15); background: var(--card); transform: scale(1); }
 }
 .goal-update { animation: flash-goal 4s ease-out; }
@@ -153,7 +164,14 @@ body{
 .team-flag{font-size:32px;line-height:1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));}
 .score-block{text-align:center;min-width:110px}
 .score{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);letter-spacing:2px;line-height:1; text-shadow: 0 2px 8px rgba(0,0,0,0.5);}
-.score.live-score{color:#FF8800; text-shadow: 0 0 12px rgba(255, 136, 0, 0.5);}
+
+/* Placar Ao Vivo Maior */
+.score.live-score{
+  font-size: 52px;
+  color: #FF5555;
+  text-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
+}
+
 .score.upcoming{font-size:18px;color:var(--muted);letter-spacing:1px}
 .game-time{font-size:13px;font-weight: 600;color:var(--muted);margin-top:6px;letter-spacing:1px}
 .game-time.live-text{color:#FF5555;animation:pulse 2s infinite}
@@ -162,7 +180,7 @@ body{
 .group-badge{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:1px;margin-bottom:6px}
 .group-badge.brazil{background:rgba(255,223,0,.2);border-color:rgba(255,223,0,.5);color:#FFDF00}
 
-/* ── GROUPS GRID (Vidro) ── */
+/* ── GROUPS GRID ── */
 .groups-wrap{padding-bottom: 16px;}
 .groups-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .group-card{background:var(--card);backdrop-filter: blur(12px); border:1px solid var(--border);border-radius:12px;padding:14px;overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
@@ -273,20 +291,20 @@ body{
 	 
     <div class="brazil-highlight">
       <div class="brazil-header">
-        <div style="font-size:24px">🇧🇷</div>
+        <div style="font-size:18px">🇧🇷</div>
         <div>
           <div class="brazil-title">Brasil — Grupo C</div>
           <div class="brazil-sub">⭐ Rumo ao Hexa! · Cabeça de chave</div>
         </div>
       </div>
       <div class="br-fixtures">
-        <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div><div class="fix-venue">Nova York/NJ</div></div>
-        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div><div class="fix-venue">A Definir</div></div>
-        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div><div class="fix-venue">A Definir</div></div>
+        <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div></div>
+        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div></div>
+        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div></div>
       </div>
     </div>
 
-    <div class="section-title">
+    <div class="section-title live-focus">
       <div class="accent"></div>Jogos — Ao Vivo &amp; Hoje
     </div>
 
@@ -491,7 +509,10 @@ function buildGameCard(g){
 function renderGames(){
   const todayStr = new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
   const live    = allGames.filter(g=>g.isLive);
-  const done    = allGames.filter(g=>g.isDone);
+  const done    = allGames.filter(g=>g.isDone)
+                          .sort((a,b) => new Date(b.date) - new Date(a.date))
+                          .slice(0, 8);
+  
   const todayGames = allGames.filter(g=>new Date(g.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===todayStr);
   const upcoming   = allGames.filter(g=>g.isPre).slice(0,10);
 
@@ -578,11 +599,16 @@ async function loadData(){
   const statusEl = document.getElementById('api-status');
   statusEl.className='api-status api-load';
   statusEl.textContent='ATUALIZANDO';
-  const dd = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  
+  const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const startDate = '20260611'; 
+  const endDate = '20260719';
+  
   const urls = [
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dd}&limit=50`,
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=50`,
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`,
+    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${today}&limit=50`,
   ];
+  
   let ok=false;
   for(const url of urls){
     try{
@@ -591,15 +617,17 @@ async function loadData(){
       const data=await r.json();
       parseGames(data);
       try{
-        const sr=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/standings');
+        const sr=await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
         if(sr.ok) parseStandings(await sr.json());
       }catch(e){}
       ok=true; break;
     }catch(e){}
   }
+  
   statusEl.className = ok?'api-status api-ok':'api-status api-err';
   statusEl.textContent = ok?'ESPN ● AO VIVO':'DADOS LOCAIS';
   if(!ok) loadFallback();
+  
   renderGames();
   renderGroups();
   
@@ -682,10 +710,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   
   setInterval(loadData, 30000);
 
+// inicia scrollers com velocidade aumentada
   setTimeout(()=>{
-    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  0.6, 5000);
-    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 0.5, 5000);
+    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  1.2, 4000);
+    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 1.0, 4000);
   }, 2500);
+
+
 });
 </script>
 </body>
