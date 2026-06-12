@@ -87,30 +87,36 @@ body{
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);display:flex;align-items:center;gap:10px;padding:6px 0 10px;flex-shrink:0; border-bottom: 1px solid var(--border); margin-bottom: 12px;}
 .section-title .accent{width:5px;height:22px;background:linear-gradient(to bottom,var(--gold),var(--gold2));border-radius:3px}
 
-/* Título de Jogos Ao Vivo Ganha Destaque */
 .section-title.live-focus {
-  font-size: 28px;
+  font-size: 34px;
   color: #FF5555;
-  border-bottom: 2px solid rgba(212,0,31,.3);
-  text-shadow: 0 0 15px rgba(212,0,31,0.4);
+  border-bottom: 2px solid rgba(255, 85, 85, 0.5);
+  text-shadow: 0 0 20px rgba(255, 85, 85, 0.4);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 .section-title.live-focus .accent {
+  width: 8px;
+  height: 34px;
   background: #FF5555;
+  box-shadow: 0 0 12px rgba(255, 85, 85, 0.6);
 }
 
-/* ── STATS ROW ── */
+/* ── ESTATÍSTICAS DINÂMICAS ── */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex-shrink:0;}
 .stat-card{background:var(--card); backdrop-filter: blur(12px); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center; box-shadow: 0 4px 16px rgba(0,0,0,0.2);}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1; text-shadow: 0 2px 5px rgba(255,223,0,0.2);}
 .stat-label{font-size:11px;font-weight: 600;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 
-/* ── BRASIL HIGHLIGHT (AGORA DISCRETO) ── */
+/* ── BRASIL HIGHLIGHT (DISCRETO) ── */
 .brazil-highlight{
-  background: rgba(0, 0, 0, 0.2); /* Fundo super discreto */
+  background: rgba(0, 0, 0, 0.2); 
   backdrop-filter: blur(8px);
-  border: 1px solid var(--border); /* Borda padrão, sem brilho */
+  border: 1px solid var(--border); 
   border-radius: 12px;
-  padding: 10px 16px; /* Menor volume */
+  padding: 10px 16px; 
   flex-shrink: 0;
   margin-bottom: 4px;
 }
@@ -123,7 +129,7 @@ body{
 .br-fix .opp-name{font-weight:600;font-size:11px; color:var(--muted); text-transform: uppercase;}
 .br-fix .fix-date{color:var(--text);font-size:11px;margin-top:2px; font-weight: 600;}
 
-/* ── GAME CARDS (Vidro) ── */
+/* ── GAME CARDS (Vidro Genérico) ── */
 .games-list{display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px;}
 .game-card{
   background:var(--card);
@@ -139,15 +145,30 @@ body{
   transition: all 0.3s ease;
 }
 
-/* Jogo ao Vivo Agora Salta aos Olhos */
-.game-card.live-game{
-  border: 2px solid #FF5555;
-  background: linear-gradient(135deg, rgba(212,0,31,0.15), rgba(10,51,17,0.9));
-  box-shadow: 0 0 25px rgba(212,0,31,0.25);
-  transform: scale(1.02);
-  margin: 10px 14px 20px 14px; /* Margem extra para acomodar o scale e não cortar no scroll */
+/* ── CARTÕES AO VIVO E HOJE (MUITO MAIORES) ── */
+#live-games-list { gap: 20px; }
+#live-games-list .game-card {
+  background: rgba(10, 45, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 24px 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
+#live-games-list .game-card.live-game {
+  border: 2px solid #FF5555;
+  background: linear-gradient(135deg, rgba(212,0,31,0.25), rgba(10,45,15,0.95));
+  box-shadow: 0 0 40px rgba(212,0,31,0.35);
+  transform: scale(1.03);
+  margin: 15px 20px 25px 20px; 
+}
+#live-games-list .team-name { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+#live-games-list .team-flag { font-size: 52px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+#live-games-list .score { font-size: 60px; }
+#live-games-list .score.live-score { font-size: 72px; text-shadow: 0 0 20px rgba(255, 85, 85, 0.6); }
+#live-games-list .game-time { font-size: 16px; margin-top: 8px; }
+#live-games-list .group-badge { font-size: 13px; padding: 4px 12px; }
 
+/* Base de cards menores para próximos jogos ou fallback */
 .game-card.brazil-game{border-color:rgba(255,223,0,.4); background:linear-gradient(135deg, rgba(6,33,10,0.85), rgba(10,51,17,0.85));}
 .game-card.finished{opacity:.85; box-shadow: none;}
 
@@ -164,14 +185,7 @@ body{
 .team-flag{font-size:32px;line-height:1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));}
 .score-block{text-align:center;min-width:110px}
 .score{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);letter-spacing:2px;line-height:1; text-shadow: 0 2px 8px rgba(0,0,0,0.5);}
-
-/* Placar Ao Vivo Maior */
-.score.live-score{
-  font-size: 52px;
-  color: #FF5555;
-  text-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
-}
-
+.score.live-score{font-size: 52px; color: #FF5555; text-shadow: 0 0 15px rgba(255, 85, 85, 0.6);}
 .score.upcoming{font-size:18px;color:var(--muted);letter-spacing:1px}
 .game-time{font-size:13px;font-weight: 600;color:var(--muted);margin-top:6px;letter-spacing:1px}
 .game-time.live-text{color:#FF5555;animation:pulse 2s infinite}
@@ -206,36 +220,101 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gold)}
 .loading-sub{font-size:15px;color:var(--muted);margin-top:10px;letter-spacing:1px; font-weight: 500;}
-
-/* ESTILO PARA A IMAGEM DO LANGO */
 .lango-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(255,223,0,0.5); margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
-
-.empty-state {
-  color: var(--muted);
-  font-size: 16px;
-  padding: 24px 0;
-  text-align: center;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  border: 1px dashed rgba(255,255,255,0.15);
-  font-weight: 500;
-  line-height: 1.5;
-}
+.empty-state { color: var(--muted); font-size: 16px; padding: 24px 0; text-align: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15); font-weight: 500; line-height: 1.5; }
 
 /* ── MARCA D'ÁGUA ── */
-.watermark {
-  position: fixed;
-  bottom: 12px;
-  right: 20px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.4);
-  z-index: 1000;
-  pointer-events: none;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+.watermark { position: fixed; bottom: 12px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.4); z-index: 1000; pointer-events: none; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+/* ── RESPONSIVIDADE PARA TELAS MENORES (TVs HD ou Notebooks) ── */
+@media (max-height: 900px), (max-width: 1400px) {
+  .hero { padding: 12px 24px; }
+  .niagro-logo { width: 160px; height: 32px; }
+  .trophy { font-size: 30px; }
+  .title-block h1 { font-size: 28px; }
+  .clock { font-size: 24px; }
+  
+  .main { padding: 10px; gap: 12px; }
+  .left-panel { gap: 8px; }
+  
+  .stats-row { gap: 8px; }
+  .stat-card { padding: 8px; border-radius: 8px; }
+  .stat-num { font-size: 20px; }
+  .stat-label { font-size: 9px; }
+  
+  .brazil-highlight { padding: 8px 12px; border-radius: 8px; }
+  .brazil-title { font-size: 16px; }
+  .br-fix { padding: 4px; }
+  .br-fix .opp { font-size: 14px; }
+  
+  .section-title { font-size: 18px; padding: 4px 0 8px; margin-bottom: 8px; }
+  .section-title.live-focus { font-size: 22px; padding-bottom: 8px; margin-bottom: 12px; }
+  .section-title.live-focus .accent { height: 22px; width: 6px; }
+  
+  #live-games-list { gap: 12px; }
+  #live-games-list .game-card { padding: 14px 20px; border-radius: 12px; }
+  #live-games-list .game-card.live-game { margin: 6px 10px 14px 10px; }
+  #live-games-list .team-name { font-size: 16px; }
+  #live-games-list .team-flag { font-size: 38px; }
+  #live-games-list .score { font-size: 42px; }
+  #live-games-list .score.live-score { font-size: 52px; }
+  
+  .game-card { padding: 10px 14px; border-radius: 12px; }
+  .team-flag { font-size: 24px; }
+  .score { font-size: 30px; }
+  
+  .groups-grid { gap: 10px; }
+  .group-card { padding: 10px; border-radius: 10px; }
+  .group-header { font-size: 16px; margin-bottom: 6px; }
+  .standings-table th, .standings-table td { padding: 4px 2px; font-size: 12px; }
+  .flag-sm { font-size: 14px; }
+  .pts { font-size: 14px; }
+}
+
+/* ── RESPONSIVIDADE PARA TELEMÓVEIS (Mobile) ── */
+@media (max-width: 768px) {
+  /* Liberta a rolagem natural pelo ecrã tátil e desativa o layout estático da TV */
+  html, body { height: auto; overflow: auto; }
+  
+  /* Empilha o topo */
+  .hero { flex-direction: column; gap: 16px; padding: 20px; text-align: center; }
+  .hero-left { flex-direction: column; gap: 12px; }
+  .hero-right { width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px; }
+  .niagro-logo { width: 150px; }
+  .title-block h1 { font-size: 28px; }
+  
+  /* Transforma as 2 colunas em 1 coluna (empilhadas) */
+  .main { display: flex; flex-direction: column; padding: 12px; gap: 24px; overflow: visible; }
+  
+  /* Estatísticas em 2 colunas e 2 linhas no telemóvel */
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  
+  /* Jogos do Brasil empilhados */
+  .brazil-header { flex-direction: column; text-align: center; }
+  .br-fixtures { grid-template-columns: 1fr; }
+  
+  /* Reduz o tamanho gigantesco dos cartões Ao Vivo para caber no telemóvel */
+  #live-games-list .game-card { margin: 0 0 12px 0; padding: 16px; border-radius: 16px; }
+  #live-games-list .team-flag { font-size: 32px; }
+  #live-games-list .score.live-score { font-size: 42px; }
+  #live-games-list .score { font-size: 36px; }
+  #live-games-list .team-name { font-size: 13px; }
+  
+  /* Cartões normais mais compactos */
+  .game-card { padding: 12px; gap: 8px; border-radius: 12px; }
+  .team-flag { font-size: 22px; }
+  .score { font-size: 28px; }
+  .team-name { font-size: 11px; }
+  
+  /* Classificação numa única coluna longa */
+  .groups-grid { grid-template-columns: 1fr; }
+  
+  /* Oculta rótulos não essenciais no ticker para poupar espaço */
+  .ticker-label { display: none; }
+  
+  /* Anula a máscara visual de fade-out e o JS para permitir o scroll do dedo */
+  .scroll-zone { mask-image: none; -webkit-mask-image: none; overflow: visible; }
+  .scroll-content { transform: none !important; }
 }
 
 </style>
@@ -282,11 +361,24 @@ body{
 
 <div class="main">
   <div class="left-panel">
+    
      <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">48</div><div class="stat-label">Seleções</div></div>
-      <div class="stat-card"><div class="stat-num">104</div><div class="stat-label">Jogos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-live">—</div><div class="stat-label">Ao Vivo</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-today">—</div><div class="stat-label">Hoje</div></div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-played">—</div>
+        <div class="stat-label">Jogos Realizados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-goals">—</div>
+        <div class="stat-label">Total de Gols</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-avg">—</div>
+        <div class="stat-label">Média por Jogo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-high" style="font-size: 22px; padding-top: 4px;">—</div>
+        <div class="stat-label">Maior Placar</div>
+      </div>
     </div>
 	 
     <div class="brazil-highlight">
@@ -505,21 +597,37 @@ function buildGameCard(g){
   </div>`;
 }
 
-// ─── RENDER JOGOS ─────────────────────────────────────────────────────────────
+// ─── RENDER JOGOS E ESTATÍSTICAS ──────────────────────────────────────────────
 function renderGames(){
   const todayStr = new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
   const live    = allGames.filter(g=>g.isLive);
-  const done    = allGames.filter(g=>g.isDone)
-                          .sort((a,b) => new Date(b.date) - new Date(a.date))
-                          .slice(0, 8);
-  
+  const done    = allGames.filter(g=>g.isDone).sort((a,b) => new Date(b.date) - new Date(a.date));
   const todayGames = allGames.filter(g=>new Date(g.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===todayStr);
   const upcoming   = allGames.filter(g=>g.isPre).slice(0,10);
 
-  document.getElementById('stat-live').textContent  = live.length;
-  document.getElementById('stat-today').textContent = todayGames.length;
+  let totalGoals = 0;
+  let maxGoals = 0;
+  let highMatch = '—';
 
-  const shown = [...live,...done,...(live.length===0&&done.length===0?todayGames:[])];
+  done.forEach(g => {
+      const sum = g.homeScore + g.awayScore;
+      totalGoals += sum;
+      if (sum > maxGoals) {
+          maxGoals = sum;
+          highMatch = `${g.homeScore} – ${g.awayScore}`;
+      }
+  });
+
+  const avg = done.length > 0 ? (totalGoals / done.length).toFixed(1) : '0.0';
+
+  document.getElementById('stat-played').textContent = done.length;
+  document.getElementById('stat-goals').textContent = totalGoals;
+  document.getElementById('stat-avg').textContent = avg;
+  document.getElementById('stat-high').textContent = done.length > 0 ? highMatch : '—';
+  
+  const doneShown = done.slice(0, 8);
+
+  const shown = [...live,...doneShown,...(live.length===0&&doneShown.length===0?todayGames:[])];
   const liveEl = document.getElementById('live-games-list');
   
   liveEl.innerHTML = shown.length
@@ -532,7 +640,7 @@ function renderGames(){
     ? upcoming.map(buildGameCard).join('')
     : `<div class="empty-state">Sem jogos agendados para os próximos dias.</div>`;
 
-  buildTicker([...live,...done.slice(0,6),...upcoming.slice(0,6)]);
+  buildTicker([...live,...doneShown.slice(0,6),...upcoming.slice(0,6)]);
 }
 
 // ─── TICKER ───────────────────────────────────────────────────────────────────
@@ -551,7 +659,6 @@ function buildTicker(games){
 }
 
 // ─── RENDER GRUPOS ────────────────────────────────────────────────────────────
-
 function renderGroups(){
   const grid = document.getElementById('groups-grid');
   grid.innerHTML = '';
@@ -560,11 +667,8 @@ function renderGroups(){
     if(!rows||!rows.length){
       rows = g.teams.map(name=>({name,pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0}));
       allGames.filter(m=>m.isDone||m.isLive).forEach(m=>{
-        
-        // CORREÇÃO: Compara usando o nome exato em Português gerado pelo dicionário pt()
         const hi = rows.findIndex(r => pt(r.name) === pt(m.homeName));
         const ai = rows.findIndex(r => pt(r.name) === pt(m.awayName));
-        
         if(hi<0||ai<0) return;
         const h=rows[hi],a=rows[ai];
         h.j++;a.j++;h.gp+=m.homeScore;h.gc+=m.awayScore;a.gp+=m.awayScore;a.gc+=m.homeScore;
@@ -597,6 +701,7 @@ function renderGroups(){
     grid.appendChild(card);
   });
 }
+
 // ─── API LOAD ─────────────────────────────────────────────────────────────────
 async function loadData(){
   const statusEl = document.getElementById('api-status');
@@ -713,12 +818,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   
   setInterval(loadData, 30000);
 
-// inicia scrollers com velocidade aumentada
+  // inicia scrollers com velocidade aumentada apenas em ecrãs grandes (TVs e PCs)
   setTimeout(()=>{
-    leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  1.2, 4000);
-    rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 1.0, 4000);
+    if (window.innerWidth > 768) {
+      leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  1.2, 4000);
+      rightScroller = new AutoScroller('right-scroll-zone', 'right-scroll-content', 1.0, 4000);
+    }
   }, 2500);
-
 
 });
 </script>
