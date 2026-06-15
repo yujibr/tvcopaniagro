@@ -29,6 +29,21 @@ body{
   flex-direction:column;
 }
 
+/* ── MARCA D'ÁGUA (TV OVERSCAN SAFE) ── */
+.watermark { 
+  position: fixed; 
+  bottom: 25px; 
+  right: 35px;   
+  font-size: 13px; 
+  color: rgba(255, 255, 255, 0.85); 
+  z-index: 9999; 
+  pointer-events: none; 
+  letter-spacing: 1px; 
+  text-transform: uppercase; 
+  font-weight: 700; 
+  text-shadow: 0 2px 6px rgba(0,0,0,1); 
+}
+
 /* ── HERO (Compacto) ── */
 .hero{
   background:rgba(0, 0, 0, 0.3);
@@ -360,9 +375,7 @@ body{
         </div>
       </div>
       <div class="br-fixtures" id="br-fixtures-list">
-        <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div></div>
-        <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div></div>
-        <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div></div>
+        <div class="empty-state" style="padding: 10px; font-size: 12px; margin: 0; grid-column: 1/-1;">Aguardando jogos da seleção...</div>
       </div>
     </div>
 
@@ -407,7 +420,7 @@ body{
 </div>
 
 <script>
-// ─── FLAGS ───────────────────────────────────────────────────────────────────
+// ─── FLAGS (BLINDADAS COM TRIM) ───────────────────────────────────────────────
 const FLAGS = {
   'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czechia':'🇨🇿','Czech Republic':'🇨🇿',
   'Canada':'🇨🇦','Qatar':'🇶🇦','Switzerland':'🇨🇭','Bosnia & Herzegovina':'🇧🇦','Bosnia and Herzegovina':'🇧🇦',
@@ -423,7 +436,11 @@ const FLAGS = {
   'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦',
   'Denmark':'🇩🇰','Italy':'🇮🇹'
 };
-const flag = n => FLAGS[n] || '🏳️';
+
+function flag(n) {
+    if (!n) return '🏳️';
+    return FLAGS[n.trim()] || '🏳️';
+}
 
 // ─── TRADUÇÕES PARA PORTUGUÊS ────────────────────────────────────────────────
 const NOME_PT = {
@@ -442,7 +459,10 @@ const NOME_PT = {
   'Denmark':'Dinamarca', 'Italy':'Itália'
 };
 
-const pt = n => NOME_PT[n] || n;
+const pt = n => {
+    if (!n) return 'Equipe';
+    return NOME_PT[n.trim()] || n.trim();
+};
 
 // ─── GRUPOS ESTÁTICOS ─────────────────────────────────────────────────────────
 const GROUPS_STATIC = [
