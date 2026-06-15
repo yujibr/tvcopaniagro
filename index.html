@@ -19,7 +19,7 @@
 }
 html,body{height:100%;overflow:hidden}
 body{
-  /* Fundo Imersivo do Estádio atualizado para .jpg */
+  /* Fundo Imersivo do Estádio */
   background: radial-gradient(circle at top left, rgba(5, 43, 14, 0.8), rgba(2, 13, 4, 0.95)),
               url('dashboard_background.jpg') no-repeat center center fixed;
   background-size: cover;
@@ -110,7 +110,7 @@ body{
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1; text-shadow: 0 2px 5px rgba(255,223,0,0.2);}
 .stat-label{font-size:11px;font-weight: 600;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 
-/* ── BRASIL HIGHLIGHT (DISCRETO) ── */
+/* ── BRASIL HIGHLIGHT (DINÂMICO) ── */
 .brazil-highlight{
   background: rgba(0, 0, 0, 0.2); 
   backdrop-filter: blur(8px);
@@ -125,7 +125,7 @@ body{
 .brazil-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px; font-weight: 500;}
 .br-fixtures{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .br-fix{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:6px;text-align:center;}
-.br-fix .opp{font-size:16px;margin-bottom:2px}
+.br-fix .opp{font-size:20px;margin-bottom:2px}
 .br-fix .opp-name{font-weight:600;font-size:11px; color:var(--muted); text-transform: uppercase;}
 .br-fix .fix-date{color:var(--text);font-size:11px;margin-top:2px; font-weight: 600;}
 
@@ -223,34 +223,25 @@ body{
 .lango-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(255,223,0,0.5); margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
 .empty-state { color: var(--muted); font-size: 16px; padding: 24px 0; text-align: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15); font-weight: 500; line-height: 1.5; }
 
-/* ── MARCA D'ÁGUA ── */
-.watermark { position: fixed; bottom: 12px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.4); z-index: 1000; pointer-events: none; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-
-/* ── RESPONSIVIDADE PARA TELAS MENORES (TVs HD ou Notebooks) ── */
+/* ── RESPONSIVIDADE PARA TELAS MENORES ── */
 @media (max-height: 900px), (max-width: 1400px) {
   .hero { padding: 12px 24px; }
   .niagro-logo { width: 160px; height: 32px; }
   .trophy { font-size: 30px; }
   .title-block h1 { font-size: 28px; }
   .clock { font-size: 24px; }
-  
   .main { padding: 10px; gap: 12px; }
   .left-panel { gap: 8px; }
-  
   .stats-row { gap: 8px; }
   .stat-card { padding: 8px; border-radius: 8px; }
   .stat-num { font-size: 20px; }
   .stat-label { font-size: 9px; }
-  
   .brazil-highlight { padding: 8px 12px; border-radius: 8px; }
   .brazil-title { font-size: 16px; }
   .br-fix { padding: 4px; }
-  .br-fix .opp { font-size: 14px; }
-  
   .section-title { font-size: 18px; padding: 4px 0 8px; margin-bottom: 8px; }
   .section-title.live-focus { font-size: 22px; padding-bottom: 8px; margin-bottom: 12px; }
   .section-title.live-focus .accent { height: 22px; width: 6px; }
-  
   #live-games-list { gap: 12px; }
   #live-games-list .game-card { padding: 14px 20px; border-radius: 12px; }
   #live-games-list .game-card.live-game { margin: 6px 10px 14px 10px; }
@@ -258,11 +249,9 @@ body{
   #live-games-list .team-flag { font-size: 38px; }
   #live-games-list .score { font-size: 42px; }
   #live-games-list .score.live-score { font-size: 52px; }
-  
   .game-card { padding: 10px 14px; border-radius: 12px; }
   .team-flag { font-size: 24px; }
   .score { font-size: 30px; }
-  
   .groups-grid { gap: 10px; }
   .group-card { padding: 10px; border-radius: 10px; }
   .group-header { font-size: 16px; margin-bottom: 6px; }
@@ -271,48 +260,29 @@ body{
   .pts { font-size: 14px; }
 }
 
-/* ── RESPONSIVIDADE PARA TELEMÓVEIS (Mobile) ── */
+/* ── RESPONSIVIDADE PARA TELEMÓVEIS ── */
 @media (max-width: 768px) {
-  /* Liberta a rolagem natural pelo ecrã tátil e desativa o layout estático da TV */
   html, body { height: auto; overflow: auto; }
-  
-  /* Empilha o topo */
   .hero { flex-direction: column; gap: 16px; padding: 20px; text-align: center; }
   .hero-left { flex-direction: column; gap: 12px; }
   .hero-right { width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px; }
   .niagro-logo { width: 150px; }
   .title-block h1 { font-size: 28px; }
-  
-  /* Transforma as 2 colunas em 1 coluna (empilhadas) */
   .main { display: flex; flex-direction: column; padding: 12px; gap: 24px; overflow: visible; }
-  
-  /* Estatísticas em 2 colunas e 2 linhas no telemóvel */
   .stats-row { grid-template-columns: 1fr 1fr; }
-  
-  /* Jogos do Brasil empilhados */
   .brazil-header { flex-direction: column; text-align: center; }
   .br-fixtures { grid-template-columns: 1fr; }
-  
-  /* Reduz o tamanho gigantesco dos cartões Ao Vivo para caber no telemóvel */
   #live-games-list .game-card { margin: 0 0 12px 0; padding: 16px; border-radius: 16px; }
   #live-games-list .team-flag { font-size: 32px; }
   #live-games-list .score.live-score { font-size: 42px; }
   #live-games-list .score { font-size: 36px; }
   #live-games-list .team-name { font-size: 13px; }
-  
-  /* Cartões normais mais compactos */
   .game-card { padding: 12px; gap: 8px; border-radius: 12px; }
   .team-flag { font-size: 22px; }
   .score { font-size: 28px; }
   .team-name { font-size: 11px; }
-  
-  /* Classificação numa única coluna longa */
   .groups-grid { grid-template-columns: 1fr; }
-  
-  /* Oculta rótulos não essenciais no ticker para poupar espaço */
   .ticker-label { display: none; }
-  
-  /* Anula a máscara visual de fade-out e o JS para permitir o scroll do dedo */
   .scroll-zone { mask-image: none; -webkit-mask-image: none; overflow: visible; }
   .scroll-content { transform: none !important; }
 }
@@ -321,7 +291,7 @@ body{
 </head>
 <body>
 
-<div class="watermark">V.12062026 - Desenvolvido por Luciano Suzuki</div>
+<div class="watermark">V.15062026 - Desenvolvido por Luciano Suzuki</div>
 
 <div class="loading-overlay" id="loader">
   <img src="lango_torcedor.png" alt="Lango Torcedor" class="lango-avatar" onerror="this.style.display='none'">
@@ -389,7 +359,7 @@ body{
           <div class="brazil-sub">⭐ Rumo ao Hexa! · Cabeça de chave</div>
         </div>
       </div>
-      <div class="br-fixtures">
+      <div class="br-fixtures" id="br-fixtures-list">
         <div class="br-fix"><div class="opp">🇲🇦</div><div class="opp-name">Marrocos</div><div class="fix-date">13/06 · 19h</div></div>
         <div class="br-fix"><div class="opp">🇭🇹</div><div class="opp-name">Haiti</div><div class="fix-date">19/06</div></div>
         <div class="br-fix"><div class="opp">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div><div class="opp-name">Escócia</div><div class="fix-date">24/06</div></div>
@@ -501,6 +471,12 @@ function fmtTime(iso){
 function fmtDate(iso){
   try{ return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:'America/Sao_Paulo'}); }catch(e){return '—'}
 }
+function fmtDateShort(iso){
+  try{ 
+    const d = new Date(iso);
+    return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); 
+  }catch(e){return '—'}
+}
 
 // ─── PARSE ESPN ───────────────────────────────────────────────────────────────
 function parseGames(data){
@@ -605,6 +581,7 @@ function renderGames(){
   const todayGames = allGames.filter(g=>new Date(g.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===todayStr);
   const upcoming   = allGames.filter(g=>g.isPre).slice(0,10);
 
+  // 1. Estatísticas
   let totalGoals = 0;
   let maxGoals = 0;
   let highMatch = '—';
@@ -625,8 +602,38 @@ function renderGames(){
   document.getElementById('stat-avg').textContent = avg;
   document.getElementById('stat-high').textContent = done.length > 0 ? highMatch : '—';
   
-  const doneShown = done.slice(0, 8);
+  // 2. SESSÃO DINÂMICA DO BRASIL
+  const brGames = allGames.filter(g => g.homeName === 'Brazil' || g.awayName === 'Brazil').sort((a,b) => new Date(a.date) - new Date(b.date));
+  const brFixturesEl = document.getElementById('br-fixtures-list');
+  
+  if (brFixturesEl && brGames.length > 0) {
+    brFixturesEl.innerHTML = brGames.slice(0, 3).map(g => {
+      const oppName = g.homeName === 'Brazil' ? g.awayName : g.homeName;
+      const brScore = g.homeName === 'Brazil' ? g.homeScore : g.awayScore;
+      const oppScore = g.homeName === 'Brazil' ? g.awayScore : g.homeScore;
 
+      if (g.isDone) {
+         return `<div class="br-fix">
+           <div class="opp-name" style="margin-bottom:4px;">${pt(oppName)}</div>
+           <div class="fix-date" style="color: var(--gold); font-size: 14px; font-weight: 800;">🇧🇷 ${brScore} <span style="color:var(--muted); font-weight:400">x</span> ${oppScore} <span style="font-size:16px">${flag(oppName)}</span></div>
+         </div>`;
+      } else if (g.isLive) {
+         return `<div class="br-fix">
+           <div class="opp-name" style="margin-bottom:4px; color:#FF5555;">${pt(oppName)} <span style="animation: pulse 1s infinite">●</span></div>
+           <div class="fix-date" style="color: #FF5555; font-size: 14px; font-weight: 800;">🇧🇷 ${brScore} <span style="color:rgba(255,85,85,0.5); font-weight:400">x</span> ${oppScore} <span style="font-size:16px">${flag(oppName)}</span></div>
+         </div>`;
+      } else {
+         return `<div class="br-fix">
+           <div class="opp" style="font-size: 20px;">${flag(oppName)}</div>
+           <div class="opp-name">${pt(oppName)}</div>
+           <div class="fix-date">${fmtDateShort(g.date)} · ${fmtTime(g.date).replace('h','')}h</div>
+         </div>`;
+      }
+    }).join('');
+  }
+
+  // 3. Renderização Geral
+  const doneShown = done.slice(0, 8);
   const shown = [...live,...doneShown,...(live.length===0&&doneShown.length===0?todayGames:[])];
   const liveEl = document.getElementById('live-games-list');
   
@@ -746,7 +753,8 @@ async function loadData(){
 
 function loadFallback(){
   allGames=[
-    {id:'br-ma', date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo C',venue:'Nova York/NJ', justScored: false},
+    // Alterado para 'post' (finalizado) e com placar para você ver o funcionamento das caixas do Brasil
+    {id:'br-ma', date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:2,awayScore:0,state:'post',detail:'FT',isDone:true,isLive:false,isPre:false,group:'Grupo C',venue:'Nova York/NJ', justScored: false},
     {id:'mx-sa', date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:2,awayScore:1,state:'in',detail:'78\'',isDone:false,isLive:true,isPre:false,group:'Grupo A',venue:'Cidade do México', justScored: true},
     {id:'ca-it', date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto', justScored: false},
     {id:'us-pa', date:'2026-06-13T01:00:00Z',homeName:'United States',awayName:'Paraguay',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo D',venue:'Los Angeles', justScored: false},
@@ -818,7 +826,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   
   setInterval(loadData, 30000);
 
-  // inicia scrollers com velocidade aumentada apenas em ecrãs grandes (TVs e PCs)
+  // inicia scrollers com velocidade aumentada apenas em telas grandes (TVs e PCs)
   setTimeout(()=>{
     if (window.innerWidth > 768) {
       leftScroller  = new AutoScroller('left-scroll-zone',  'left-scroll-content',  1.2, 4000);
