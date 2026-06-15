@@ -167,44 +167,49 @@ body{
 
 <script>
 // ─── DICIONÁRIO E FLAGS PT-BR ───
-const FLAGS = { 'Mexico':'🇲🇽','Brazil':'🇧🇷','Morocco':'🇲🇦','Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','France':'🇫🇷','Argentina':'🇦🇷','Germany':'🇩🇪','Croatia':'🇭🇷', 'Colombia':'🇨🇴', 'Uruguay':'🇺🇾', 'Spain':'🇪🇸', 'Portugal':'🇵🇹', 'Ecuador':'🇪🇨' };
-const flag = n => FLAGS[n] || '🏳️';
-const NOME_PT = { 'Mexico':'México','Brazil':'Brasil','Morocco':'Marrocos','Haiti':'Haiti','Scotland':'Escócia','France':'França','Argentina':'Argentina','Germany':'Alemanha','Croatia':'Croácia', 'Colombia':'Colômbia', 'Uruguay':'Uruguai', 'Spain':'Espanha', 'Portugal':'Portugal', 'Ecuador':'Equador'};
-const pt = n => NOME_PT[n] || n || 'Equipe';
+const FLAGS = { 
+    'Mexico':'🇲🇽', 'Brazil':'🇧🇷', 'Morocco':'🇲🇦', 'Haiti':'🇭🇹', 'Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿', 
+    'France':'🇫🇷', 'Argentina':'🇦🇷', 'Germany':'🇩🇪', 'Croatia':'🇭🇷', 'Colombia':'🇨🇴', 
+    'Uruguay':'🇺🇾', 'Spain':'🇪🇸', 'Portugal':'🇵🇹', 'Ecuador':'🇪🇨', 'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿', 
+    'Italy':'🇮🇹', 'USA':'🇺🇸', 'United States':'🇺🇸', 'Netherlands':'🇳🇱', 'Belgium':'🇧🇪' 
+};
+
+function flag(n) {
+    if (!n) return '🏳️';
+    // O trim() remove os espaços invisíveis que a API pode mandar (ex: "Brazil ")
+    return FLAGS[n.trim()] || '🏳️';
+}
+
+const NOME_PT = { 'Mexico':'México','Brazil':'Brasil','Morocco':'Marrocos','Haiti':'Haiti','Scotland':'Escócia','France':'França','Argentina':'Argentina','Germany':'Alemanha','Croatia':'Croácia', 'Colombia':'Colômbia', 'Uruguay':'Uruguai', 'Spain':'Espanha', 'Portugal':'Portugal', 'Ecuador':'Equador', 'England':'Inglaterra', 'Italy':'Itália', 'USA':'Estados Unidos', 'United States':'Estados Unidos', 'Netherlands':'Holanda', 'Belgium':'Bélgica'};
+const pt = n => { if(!n) return 'Equipe'; return NOME_PT[n.trim()] || n.trim(); };
 
 const POS_PT = { 'G': 'GOL', 'GK': 'GOL', 'D': 'DEF', 'CB': 'ZAG', 'LB': 'LE', 'RB': 'LD', 'LWB': 'ALE', 'RWB': 'ALD', 'M': 'MEI', 'CM': 'VOL', 'CDM': 'VOL', 'CAM': 'MEI', 'RM': 'MD', 'LM': 'ME', 'F': 'ATA', 'ST': 'ATA', 'RW': 'PD', 'LW': 'PE', 'CF': 'ATA', 'S': 'RES', 'SUB': 'RES' };
 
-const STAT_PT = { 'possessionPct': 'Posse de Bola (%)', 'totalShots': 'Finalizações', 'shotsOnTarget': 'Chutes no Gol', 'foulsCommitted': 'Faltas Cometidas', 'corners': 'Escanteios', 'yellowCards': 'Cartões Amarelos', 'redCards': 'Cartões Vermelhos', 'saves': 'Defesas do Goleiro', 'offsides': 'Impedimentos' };
+const STAT_PT = { 'possessionPct': 'Posse de Bola (%)', 'totalShots': 'Finalizações', 'shotsOnTarget': 'Chutes no Gol', 'foulsCommitted': 'Faltas Cometidas', 'wonCorners': 'Escanteios', 'corners': 'Escanteios', 'yellowCards': 'Cartões Amarelos', 'redCards': 'Cartões Vermelhos', 'saves': 'Defesas do Goleiro', 'offsides': 'Impedimentos' };
 
 // ─── NOVO CAÇADOR DE TREINADORES (RESOLVE O NÃO DIVULGADO) ───
 function getCoachName(rosterData, competitorData, boxscoreData) {
-  // Puxa o objeto do treinador da gaveta que o contiver
   let c = rosterData?.coach?.[0] || rosterData?.coaches?.[0] || 
           boxscoreData?.coaches?.[0] || 
           competitorData?.team?.manager || competitorData?.team?.coach;
           
   if (!c) return 'Não divulgado';
 
-  // Desmonta o objeto usando as variáveis mais comuns da ESPN
   return c.displayName || c.fullName || c.shortName || c.name || 
          (c.firstName ? `${c.firstName} ${c.lastName || ''}`.trim() : 'Não divulgado');
 }
 
-// ─── NOVO CAÇADOR DE MINUTOS (RESOLVE O [object Object]) ───
+// ─── NOVO CAÇADOR DE MINUTOS ───
 function getPlayTime(play) {
-  // Se for direto um texto (Ex: "45'")
   if (typeof play.clock === 'string') return play.clock;
   if (typeof play.time === 'string') return play.time;
   
-  // Se for um objeto complexo (Isto é o que causava o [object Object])
   if (play.clock?.displayValue) return play.clock.displayValue;
   if (play.clock?.displayClock) return play.clock.displayClock;
   if (play.time?.displayValue) return play.time.displayValue;
   
-  // Em alguns casos, a ESPN manda apenas "minute: 45"
   if (play.minute) return play.minute + "'";
   
-  // Para tempos extras como Intervalo (HT)
   if (play.period?.displayValue) return play.period.displayValue;
   
   return "-'";
@@ -412,9 +417,13 @@ function renderStats(boxscore) {
   const awayStats = boxscore.teams?.[1]?.statistics || [];
   let html = '';
 
-  ['possessionPct', 'totalShots', 'shotsOnTarget', 'foulsCommitted', 'corners'].forEach(key => {
-    const hs = homeStats.find(s => s.name === key)?.displayValue || '0';
-    const as = awayStats.find(s => s.name === key)?.displayValue || '0';
+  // Modificado para capturar a chave 'wonCorners' (que a ESPN usa agora para Escanteios)
+  ['possessionPct', 'totalShots', 'shotsOnTarget', 'foulsCommitted', 'wonCorners'].forEach(key => {
+    const hStat = homeStats.find(s => s.name === key || s.name === 'corners');
+    const aStat = awayStats.find(s => s.name === key || s.name === 'corners');
+    
+    const hs = hStat ? (hStat.displayValue || hStat.value || '0') : '0';
+    const as = aStat ? (aStat.displayValue || aStat.value || '0') : '0';
     
     const hNum = parseFloat(hs) || 0;
     const aNum = parseFloat(as) || 0;
@@ -426,7 +435,7 @@ function renderStats(boxscore) {
       <div class="stat-item">
         <div class="stat-header">
           <span style="color:var(--gold)">${hs}</span>
-          <span>${STAT_PT[key] || key}</span>
+          <span>${STAT_PT[key] || key || 'Escanteios'}</span>
           <span style="color:#66B2FF">${as}</span>
         </div>
         <div class="stat-bar-bg">
@@ -446,7 +455,6 @@ function renderPlays(plays) {
   }
 
   let html = '';
-  // Se for lances gerados pela gente, não inverte. Se for da ESPN, inverte.
   const lances = plays[0].clock?.displayClock === 'Agora' || plays[0].clock?.displayClock === 'Info' ? plays : [...plays].reverse();
   
   lances.slice(0, 10).forEach(play => {
@@ -467,7 +475,6 @@ function renderPlays(plays) {
     if(playType.includes('yellow')) text = '🟨 ' + text;
     if(playType.includes('red')) text = '🟥 ' + text;
 
-    // A mágica acontece aqui: usamos a nova função para puxar o minuto exato
     const exactTime = getPlayTime(play);
 
     html += `
