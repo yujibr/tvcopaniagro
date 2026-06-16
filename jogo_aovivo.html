@@ -128,7 +128,7 @@ body{
 </head>
 <body>
 
-<div class="watermark">Desenvolvido por Luciano Suzuki</div>
+<div class="watermark">V.15062026 - Desenvolvido por Luciano Suzuki</div>
 
 <div class="match-header" id="match-header">
   <h2 style="color: var(--gold); text-align: center; width: 100%;">Procurando jogo ao vivo...</h2>
@@ -167,21 +167,61 @@ body{
 
 <script>
 // ─── DICIONÁRIO E FLAGS PT-BR ───
-const FLAGS = { 
-    'Mexico':'🇲🇽', 'Brazil':'🇧🇷', 'Morocco':'🇲🇦', 'Haiti':'🇭🇹', 'Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿', 
-    'France':'🇫🇷', 'Argentina':'🇦🇷', 'Germany':'🇩🇪', 'Croatia':'🇭🇷', 'Colombia':'🇨🇴', 
-    'Uruguay':'🇺🇾', 'Spain':'🇪🇸', 'Portugal':'🇵🇹', 'Ecuador':'🇪🇨', 'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿', 
-    'Italy':'🇮🇹', 'USA':'🇺🇸', 'United States':'🇺🇸', 'Netherlands':'🇳🇱', 'Belgium':'🇧🇪' 
+const FLAGS = {
+  // Nomes em Inglês
+  'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czechia':'🇨🇿','Czech Republic':'🇨🇿',
+  'Canada':'🇨🇦','Qatar':'🇶🇦','Switzerland':'🇨🇭','Bosnia & Herzegovina':'🇧🇦','Bosnia and Herzegovina':'🇧🇦',
+  'Brazil':'🇧🇷','Morocco':'🇲🇦','Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'USA':'🇺🇸','United States':'🇺🇸','Paraguay':'🇵🇾','Australia':'🇦🇺','Türkiye':'🇹🇷','Turkey':'🇹🇷',
+  'Germany':'🇩🇪','Curaçao':'🇨🇼','Curacao':'🇨🇼',"Côte d'Ivoire":'🇨🇮','Ivory Coast':'🇨🇮','Ecuador':'🇪🇨',
+  'Netherlands':'🇳🇱','Japan':'🇯🇵','Tunisia':'🇹🇳','Sweden':'🇸🇪','Ukraine':'🇺🇦',
+  'Belgium':'🇧🇪','Egypt':'🇪🇬','Iran':'🇮🇷','New Zealand':'🇳🇿',
+  'Spain':'🇪🇸','Cabo Verde':'🇨🇻','Cape Verde':'🇨🇻','Saudi Arabia':'🇸🇦','Uruguay':'🇺🇾',
+  'France':'🇫🇷','Senegal':'🇸🇳','Iraq':'🇮🇶','Norway':'🇳🇴',
+  'Argentina':'🇦🇷','Algeria':'🇩🇿','Austria':'🇦🇹','Jordan':'🇯🇴',
+  'Portugal':'🇵🇹','DR Congo':'🇨🇩','Congo DR':'🇨🇩','Uzbekistan':'🇺🇿','Colombia':'🇨🇴',
+  'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦','Denmark':'🇩🇰','Italy':'🇮🇹',
+  // Nomes em Português
+  'México':'🇲🇽', 'África do Sul':'🇿🇦', 'Coreia do Sul':'🇰🇷', 'Tchéquia':'🇨🇿',
+  'Canadá':'🇨🇦', 'Catar':'🇶🇦', 'Suíça':'🇨🇭', 'Bósnia e Herz.':'🇧🇦',
+  'Brasil':'🇧🇷', 'Marrocos':'🇲🇦', 'Escócia':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'Estados Unidos':'🇺🇸', 'Paraguai':'🇵🇾', 'Austrália':'🇦🇺', 'Turquia':'🇹🇷',
+  'Alemanha':'🇩🇪', 'Costa do Marfim':'🇨🇮', 'Equador':'🇪🇨',
+  'Holanda':'🇳🇱', 'Japão':'🇯🇵', 'Tunísia':'🇹🇳', 'Suécia':'🇸🇪', 'Ucrânia':'🇺🇦',
+  'Bélgica':'🇧🇪', 'Egito':'🇪🇬', 'Irã':'🇮🇷', 'Nova Zelândia':'🇳🇿',
+  'Espanha':'🇪🇸', 'Cabo Verde':'🇨🇻', 'Arábia Saudita':'🇸🇦', 'Uruguai':'🇺🇾',
+  'França':'🇫🇷', 'Senegal':'🇸🇳', 'Iraque':'🇮🇶', 'Noruega':'🇳🇴',
+  'Argélia':'🇩🇿', 'Áustria':'🇦🇹', 'Jordânia':'🇯🇴',
+  'RD Congo':'🇨🇩', 'Uzbequistão':'🇺🇿', 'Colômbia':'🇨🇴',
+  'Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croácia':'🇭🇷', 'Gana':'🇬🇭', 'Panamá':'🇵🇦',
+  'Dinamarca':'🇩🇰', 'Itália':'🇮🇹'
 };
 
 function flag(n) {
     if (!n) return '🏳️';
-    // O trim() remove os espaços invisíveis que a API pode mandar (ex: "Brazil ")
     return FLAGS[n.trim()] || '🏳️';
 }
 
-const NOME_PT = { 'Mexico':'México','Brazil':'Brasil','Morocco':'Marrocos','Haiti':'Haiti','Scotland':'Escócia','France':'França','Argentina':'Argentina','Germany':'Alemanha','Croatia':'Croácia', 'Colombia':'Colômbia', 'Uruguay':'Uruguai', 'Spain':'Espanha', 'Portugal':'Portugal', 'Ecuador':'Equador', 'England':'Inglaterra', 'Italy':'Itália', 'USA':'Estados Unidos', 'United States':'Estados Unidos', 'Netherlands':'Holanda', 'Belgium':'Bélgica'};
-const pt = n => { if(!n) return 'Equipe'; return NOME_PT[n.trim()] || n.trim(); };
+const NOME_PT = {
+  'Mexico':'México', 'South Africa':'África do Sul', 'South Korea':'Coreia do Sul', 'Czechia':'Tchéquia', 'Czech Republic':'Tchéquia',
+  'Canada':'Canadá', 'Qatar':'Catar', 'Switzerland':'Suíça', 'Bosnia & Herzegovina':'Bósnia e Herz.', 'Bosnia and Herzegovina':'Bósnia e Herz.',
+  'Brazil':'Brasil', 'Morocco':'Marrocos', 'Haiti':'Haiti', 'Scotland':'Escócia',
+  'USA':'Estados Unidos', 'United States':'Estados Unidos', 'Paraguay':'Paraguai', 'Australia':'Austrália', 'Türkiye':'Turquia', 'Turkey':'Turquia',
+  'Germany':'Alemanha', 'Curaçao':'Curaçao', 'Curacao':'Curaçao', "Côte d'Ivoire":'Costa do Marfim', 'Ivory Coast':'Costa do Marfim', 'Ecuador':'Equador',
+  'Netherlands':'Holanda', 'Japan':'Japão', 'Tunisia':'Tunísia', 'Sweden':'Suécia', 'Ukraine':'Ucrânia',
+  'Belgium':'Bélgica', 'Egypt':'Egito', 'Iran':'Irã', 'New Zealand':'Nova Zelândia',
+  'Spain':'Espanha', 'Cabo Verde':'Cabo Verde', 'Cape Verde':'Cabo Verde', 'Saudi Arabia':'Arábia Saudita', 'Uruguay':'Uruguai',
+  'France':'França', 'Senegal':'Senegal', 'Iraq':'Iraque', 'Norway':'Noruega',
+  'Argentina':'Argentina', 'Algeria':'Argélia', 'Austria':'Áustria', 'Jordan':'Jordânia',
+  'Portugal':'Portugal', 'DR Congo':'RD Congo', 'Congo DR':'RD Congo', 'Uzbekistan':'Uzbequistão', 'Colombia':'Colômbia',
+  'England':'Inglaterra', 'Croatia':'Croácia', 'Ghana':'Gana', 'Panama':'Panamá',
+  'Denmark':'Dinamarca', 'Italy':'Itália'
+};
+
+const pt = n => {
+    if (!n) return 'Equipe';
+    return NOME_PT[n.trim()] || n.trim();
+};
 
 const POS_PT = { 'G': 'GOL', 'GK': 'GOL', 'D': 'DEF', 'CB': 'ZAG', 'LB': 'LE', 'RB': 'LD', 'LWB': 'ALE', 'RWB': 'ALD', 'M': 'MEI', 'CM': 'VOL', 'CDM': 'VOL', 'CAM': 'MEI', 'RM': 'MD', 'LM': 'ME', 'F': 'ATA', 'ST': 'ATA', 'RW': 'PD', 'LW': 'PE', 'CF': 'ATA', 'S': 'RES', 'SUB': 'RES' };
 
@@ -308,7 +348,7 @@ async function fetchMatchData() {
     let selectedEvent = null;
 
     if (liveEvents.length > 0) {
-        selectedEvent = liveEvents.find(e => e.name.includes("Brazil")) || liveEvents[0];
+        selectedEvent = liveEvents.find(e => e.name.includes("Brazil") || e.name.includes("Brasil")) || liveEvents[0];
     } else {
         selectedEvent = scoreData.events?.[0]; 
     }
