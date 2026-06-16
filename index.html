@@ -302,11 +302,70 @@ body{
   .scroll-content { transform: none !important; }
 }
 
+/* ── MATA-MATA (CHAVES) ── */
+.knockout-wrap {
+  display: none; /* Escondido na fase de grupos */
+  gap: 16px;
+  padding-bottom: 20px;
+  overflow-x: auto; /* Permite scroll horizontal em telas menores */
+  min-height: 500px;
+}
+.knockout-wrap.active {
+  display: flex; 
+}
+.bracket-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 220px;
+  flex-shrink: 0;
+}
+.bracket-title {
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--gold);
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.bracket-match {
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+/* Linhas de conexão (apontando para a próxima fase) */
+.bracket-col:not(:last-child) .bracket-match::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -16px;
+  width: 16px;
+  height: 2px;
+  background: var(--border);
+}
+.b-team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.b-team:first-child { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.b-team-name { display: flex; align-items: center; gap: 8px; color: var(--text); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.b-score { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--gold); }
+.b-team.winner .b-team-name { color: #4CAF50; }
+.b-team.winner .b-score { color: #4CAF50; }
+
 </style>
 </head>
 <body>
 
-<div class="watermark">V.15062026 - Desenvolvido por Luciano Suzuki</div>
+<div class="watermark">V.16062026 - Desenvolvido por Luciano Suzuki</div>
 
 <div class="loading-overlay" id="loader">
   <img src="lango_torcedor.jpg" alt="Lango Torcedor" class="lango-avatar" onerror="this.style.display='none'">
@@ -326,7 +385,7 @@ body{
   </div>
   <div class="hero-right">
     <div id="api-status" class="api-status api-load" onclick="loadData()" title="Clique para atualizar">CARREGANDO</div>
-    <div class="live-badge"><div class="live-dot"></div>AO VIVO</div>
+    <div class="live-badge" id="live-badge" style="display: none;"><div class="live-dot"></div>AO VIVO</div>
     <div>
       <div class="clock" id="clock">--:--:--</div>
       <div class="date-str" id="datestr">—</div>
@@ -402,16 +461,17 @@ body{
   </div>
 
   <div class="right-panel">
-    <div class="section-title">
+    <div class="section-title" id="right-panel-title">
       <div class="accent"></div>Classificação dos Grupos
     </div>
     <div class="scroll-zone" id="right-scroll-zone">
       <div class="scroll-content" id="right-scroll-content">
-        <div class="groups-wrap">
+        <div class="groups-wrap" id="groups-wrap">
           <div class="groups-grid" id="groups-grid">
             <div class="empty-state" style="grid-column:1/-1;">Buscando grupos...</div>
           </div>
         </div>
+        <div class="knockout-wrap" id="knockout-wrap"></div>
         <div style="height:60px"></div>
       </div>
     </div>
@@ -420,6 +480,13 @@ body{
 </div>
 
 <script>
+// ─── CONFIGURAÇÃO DA COMPETIÇÃO ───────────────────────────────────────────────
+// Ativa automaticamente o modo mata-mata a partir de 29 de Junho de 2026.
+// Utilizando construtor numérico (Ano, Mês, Dia) para evitar falhas de parse de string no navegador.
+const currentDate = new Date();
+const knockoutDate = new Date(2026, 5, 29); // 5 corresponde a Junho (0-indexado)
+const IS_KNOCKOUT_PHASE = currentDate >= knockoutDate; 
+
 // ─── FLAGS (BLINDADAS COM TRIM) ───────────────────────────────────────────────
 const FLAGS = {
   'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czechia':'🇨🇿','Czech Republic':'🇨🇿',
@@ -601,6 +668,12 @@ function renderGames(){
   const todayGames = allGames.filter(g=>new Date(g.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===todayStr);
   const upcoming   = allGames.filter(g=>g.isPre).slice(0,10);
 
+  // NOVIDADE: Controle dinâmico do Badge "AO VIVO"
+  const liveBadge = document.getElementById('live-badge');
+  if (liveBadge) {
+    // Se houver algum jogo na array 'live', exibe usando 'flex' (layout original), senão oculta.
+    liveBadge.style.display = live.length > 0 ? 'flex' : 'none'; 
+  }
   // 1. Estatísticas
   let totalGoals = 0;
   let maxGoals = 0;
@@ -687,6 +760,8 @@ function buildTicker(games){
 
 // ─── RENDER GRUPOS ────────────────────────────────────────────────────────────
 function renderGroups(){
+  if (IS_KNOCKOUT_PHASE) return; // Não renderiza a classificação de grupos se for mata-mata
+
   const grid = document.getElementById('groups-grid');
   grid.innerHTML = '';
   GROUPS_STATIC.forEach(g=>{
@@ -729,51 +804,90 @@ function renderGroups(){
   });
 }
 
+// ─── RENDER CHAVEAMENTO MATA-MATA ─────────────────────────────────────────────
+function renderBracket() {
+  const wrap = document.getElementById('knockout-wrap');
+  if (!wrap) return;
+
+  const phases = [
+    { name: '16 Avos', matches: 16 },
+    { name: 'Oitavas', matches: 8 },
+    { name: 'Quartas', matches: 4 },
+    { name: 'Semifinal', matches: 2 },
+    { name: 'Final', matches: 1 }
+  ];
+
+  let html = '';
+  phases.forEach(phase => {
+    html += `<div class="bracket-col"><div class="bracket-title">${phase.name}</div>`;
+    
+    for(let i = 0; i < phase.matches; i++) {
+      html += `
+        <div class="bracket-match">
+          <div class="b-team"><div class="b-team-name"><span class="flag-sm">&#9873;</span> A Definir</div><div class="b-score">-</div></div>
+          <div class="b-team"><div class="b-team-name"><span class="flag-sm">&#9873;</span> A Definir</div><div class="b-score">-</div></div>
+        </div>
+      `;
+    }
+    
+    html += `</div>`;
+  });
+  
+  wrap.innerHTML = html;
+}
+
 // ─── API LOAD ─────────────────────────────────────────────────────────────────
 async function loadData(){
   const statusEl = document.getElementById('api-status');
   statusEl.className='api-status api-load';
   statusEl.textContent='ATUALIZANDO';
   
-  const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const startDate = '20260611'; 
-  const endDate = '20260719';
-  
-  const urls = [
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`,
-    `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${today}&limit=50`,
-  ];
-  
-  let ok=false;
-  for(const url of urls){
-    try{
-      const r=await fetch(url);
-      if(!r.ok) continue;
-      const data=await r.json();
-      parseGames(data);
-      try{
-        const sr=await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
-        if(sr.ok) parseStandings(await sr.json());
-      }catch(e){}
-      ok=true; break;
-    }catch(e){}
+  try {
+      const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+      const startDate = '20260611'; 
+      const endDate = '20260719';
+      
+      const urls = [
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`,
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${today}&limit=50`,
+      ];
+      
+      let ok=false;
+      for(const url of urls){
+        try{
+          const r=await fetch(url);
+          if(!r.ok) continue;
+          const data=await r.json();
+          parseGames(data);
+          try{
+            const sr=await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
+            if(sr.ok) parseStandings(await sr.json());
+          }catch(e){}
+          ok=true; break;
+        }catch(e){}
+      }
+      
+      statusEl.className = ok?'api-status api-ok':'api-status api-err';
+      statusEl.textContent = ok?'ESPN ● AO VIVO':'DADOS LOCAIS';
+      if(!ok) loadFallback();
+      
+      renderGames();
+      renderGroups();
+      
+  } catch (err) {
+      console.error('Erro geral ao processar os dados:', err);
+  } finally {
+      // O finally garante que independente de qualquer falha no meio do código, 
+      // a tela de loading sempre vai ser fechada no final.
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        if (loader) loader.classList.add('hidden');
+      }, 1000);
   }
-  
-  statusEl.className = ok?'api-status api-ok':'api-status api-err';
-  statusEl.textContent = ok?'ESPN ● AO VIVO':'DADOS LOCAIS';
-  if(!ok) loadFallback();
-  
-  renderGames();
-  renderGroups();
-  
-  setTimeout(() => {
-    document.getElementById('loader')?.classList.add('hidden');
-  }, 1000);
 }
 
 function loadFallback(){
   allGames=[
-    // Alterado para 'post' (finalizado) e com placar para você ver o funcionamento das caixas do Brasil
     {id:'br-ma', date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:2,awayScore:0,state:'post',detail:'FT',isDone:true,isLive:false,isPre:false,group:'Grupo C',venue:'Nova York/NJ', justScored: false},
     {id:'mx-sa', date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:2,awayScore:1,state:'in',detail:'78\'',isDone:false,isLive:true,isPre:false,group:'Grupo A',venue:'Cidade do México', justScored: true},
     {id:'ca-it', date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto', justScored: false},
@@ -840,6 +954,21 @@ class AutoScroller {
 let leftScroller, rightScroller;
 
 window.addEventListener('DOMContentLoaded',()=>{
+  
+  // Aplica as alterações de Layout se estiver no chaveamento/Mata-Mata
+  if (IS_KNOCKOUT_PHASE) {
+    const groupsWrap = document.getElementById('groups-wrap');
+    if (groupsWrap) groupsWrap.style.display = 'none';
+    
+    const knockoutWrap = document.getElementById('knockout-wrap');
+    if (knockoutWrap) knockoutWrap.classList.add('active');
+    
+    const panelTitle = document.getElementById('right-panel-title');
+    if (panelTitle) panelTitle.innerHTML = '<div class="accent"></div>Chaveamento — Rumo ao Título';
+    
+    renderBracket();
+  }
+
   updateClock();
   setInterval(updateClock,1000);
   loadData();
