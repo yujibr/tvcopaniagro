@@ -185,7 +185,7 @@ const pt = n => { if(!n) return 'Equipe'; return NOME_PT[n.trim()] || n.trim(); 
 
 const POS_PT = { 'G': 'GOL', 'GK': 'GOL', 'D': 'DEF', 'CB': 'ZAG', 'LB': 'LE', 'RB': 'LD', 'LWB': 'ALE', 'RWB': 'ALD', 'M': 'MEI', 'CM': 'VOL', 'CDM': 'VOL', 'CAM': 'MEI', 'RM': 'MD', 'LM': 'ME', 'F': 'ATA', 'ST': 'ATA', 'RW': 'PD', 'LW': 'PE', 'CF': 'ATA', 'S': 'RES', 'SUB': 'RES' };
 
-const STAT_PT = { 'possessionPct': 'Posse de Bola (%)', 'totalShots': 'Finalizações', 'shotsOnTarget': 'Chutes no Gol', 'foulsCommitted': 'Faltas Cometidas', 'wonCorners': 'Escanteios', 'corners': 'Escanteios', 'yellowCards': 'Cartões Amarelos', 'redCards': 'Cartões Vermelhos', 'saves': 'Defesas do Goleiro', 'offsides': 'Impedimentos' };
+const STAT_PT = { 'possessionPct': 'Posse de Bola (%)', 'totalShots': 'Finalizações', 'shotsOnTarget': 'Chutes no Gol', 'foulsCommitted': 'Faltas Cometidas', 'wonCorners': 'Escanteios', 'corners': 'Escanteios', 'yellowCards': 'Cartões Amarelos', 'redCards': 'Cartões Vermelhos', 'saves': 'Defesas do Goleiro', 'offsides': 'Impedimentos', 'blockedShots': 'Chutes Bloqueados', 'totalPasses': 'Total de Passes', 'passesCompleted': 'Passes Certos', 'passPct': 'Precisão de Passes (%)', 'tackles': 'Desarmes' };
 
 // ─── NOVO CAÇADOR DE TREINADORES (RESOLVE O NÃO DIVULGADO) ───
 function getCoachName(rosterData, competitorData, boxscoreData) {
@@ -215,41 +215,81 @@ function getPlayTime(play) {
   return "-'";
 }
 
-// ─── TRADUTOR DE LANCES (Inglês -> PT-BR) ───
+// ─── SUPER DICIONÁRIO DE TRADUÇÃO DE LANCES ───
 function traduzirLance(texto) {
   if(!texto) return '';
   let t = texto;
+  
+  // Momentos da Partida
+  t = t.replace(/Match ends/gi, 'Fim de jogo');
+  t = t.replace(/Second Half ends/gi, 'Fim do segundo tempo');
+  t = t.replace(/First Half ends/gi, 'Fim do primeiro tempo');
+  t = t.replace(/Half time/gi, 'Intervalo');
+  t = t.replace(/Match begins/gi, 'Início do jogo');
+  t = t.replace(/Second Half begins/gi, 'Início do segundo tempo');
+  
+  // Finalizações e Gols
   t = t.replace(/Goal!/gi, 'GOL!');
   t = t.replace(/Goal/g, 'Gol');
-  t = t.replace(/Assist by/gi, 'Assistência de');
-  t = t.replace(/with a cross/gi, 'com um cruzamento');
-  t = t.replace(/with a through ball/gi, 'com um passe em profundidade');
-  t = t.replace(/Header/gi, 'Cabeceio');
+  t = t.replace(/Own Goal/gi, 'Gol contra');
   t = t.replace(/Penalty/gi, 'Pênalti');
-  t = t.replace(/Foul by/gi, 'Falta cometida por');
-  t = t.replace(/Foul/gi, 'Falta');
-  t = t.replace(/won a free kick/gi, 'sofreu uma falta');
-  t = t.replace(/Yellow Card/gi, 'Cartão Amarelo para');
-  t = t.replace(/Red Card/gi, 'Cartão Vermelho para');
-  t = t.replace(/Hand ball/gi, 'Toque de mão de');
-  t = t.replace(/VAR Decision:/gi, 'Decisão do VAR:');
+  t = t.replace(/Right footed shot/gi, 'Finalização de pé direito');
+  t = t.replace(/Left footed shot/gi, 'Finalização de pé esquerdo');
+  t = t.replace(/Header/gi, 'Cabeceio');
   t = t.replace(/Attempt saved/gi, 'Finalização defendida');
   t = t.replace(/Attempt missed/gi, 'Finalização para fora');
+  t = t.replace(/Attempt blocked/gi, 'Finalização bloqueada');
   t = t.replace(/Shot/gi, 'Finalização');
   t = t.replace(/Missed/gi, 'Para fora');
   t = t.replace(/Saved/gi, 'Defesa');
-  t = t.replace(/hit the bar/gi, 'acertou na trave');
-  t = t.replace(/hit the right post/gi, 'acertou na trave direita');
-  t = t.replace(/hit the left post/gi, 'acertou na trave esquerda');
+  t = t.replace(/hit the bar/gi, 'acertou o travessão');
+  t = t.replace(/hit the right post/gi, 'acertou a trave direita');
+  t = t.replace(/hit the left post/gi, 'acertou a trave esquerda');
+  
+  // Passes e Assistências
+  t = t.replace(/Assist by/gi, 'Assistência de');
+  t = t.replace(/with a cross/gi, 'com um cruzamento');
+  t = t.replace(/with a through ball/gi, 'com um passe em profundidade');
+  t = t.replace(/following a corner/gi, 'na sequência de um escanteio');
+  t = t.replace(/following a set piece situation/gi, 'após cobrança de bola parada');
+  t = t.replace(/following a fast break/gi, 'após contra-ataque');
+  
+  // Posição no Campo
   t = t.replace(/from outside the box/gi, 'de fora da área');
   t = t.replace(/from the center of the box/gi, 'do meio da área');
-  t = t.replace(/Substitution/gi, 'Substituição');
-  t = t.replace(/replaces/gi, 'entra no lugar de');
+  t = t.replace(/from the right side of the box/gi, 'do lado direito da área');
+  t = t.replace(/from the left side of the box/gi, 'do lado esquerdo da área');
+  t = t.replace(/from a difficult angle/gi, 'de um ângulo difícil');
+  t = t.replace(/from a free kick/gi, 'de cobrança de falta');
+  t = t.replace(/very close to the goal/gi, 'muito perto do gol');
+  
+  // Faltas, Cartões e Regras
+  t = t.replace(/Foul by/gi, 'Falta cometida por');
+  t = t.replace(/Foul/gi, 'Falta');
+  t = t.replace(/won a free kick/gi, 'sofreu uma falta');
+  t = t.replace(/is shown the yellow card/gi, 'recebe o cartão amarelo');
+  t = t.replace(/is shown the red card/gi, 'recebe o cartão vermelho');
+  t = t.replace(/Yellow Card/gi, 'Cartão Amarelo para');
+  t = t.replace(/Red Card/gi, 'Cartão Vermelho para');
+  t = t.replace(/for a foul/gi, 'por uma falta');
+  t = t.replace(/Hand ball/gi, 'Toque de mão de');
   t = t.replace(/Offside/gi, 'Impedimento');
   t = t.replace(/Corner/gi, 'Escanteio');
   t = t.replace(/conceded by/gi, 'concedido por');
-  t = t.replace(/Match ends/gi, 'Fim de jogo');
-  t = t.replace(/Half time/gi, 'Intervalo');
+  t = t.replace(/VAR Decision:/gi, 'Decisão do VAR:');
+  t = t.replace(/Penalty conceded by/gi, 'Pênalti cometido por');
+  
+  // Substituições e Jogo
+  t = t.replace(/Substitution/gi, 'Substituição');
+  t = t.replace(/replaces/gi, 'entra no lugar de');
+  t = t.replace(/Delay in match/gi, 'Jogo paralisado');
+  t = t.replace(/Delay over/gi, 'Bola rolando novamente');
+  t = t.replace(/injury/gi, 'lesão');
+  t = t.replace(/attacking half/gi, 'no campo de ataque');
+  t = t.replace(/defensive half/gi, 'no campo de defesa');
+  t = t.replace(/right wing/gi, 'ponta direita');
+  t = t.replace(/left wing/gi, 'ponta esquerda');
+  
   return t;
 }
 
@@ -258,7 +298,8 @@ let currentLiveEventId = null;
 
 async function fetchMatchData() {
   try {
-    const scoreRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard');
+    // ADICIONADO lang=pt&region=br para forçar a API a retornar metadados em português sempre que possível
+    const scoreRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?lang=pt&region=br');
     if (!scoreRes.ok) throw new Error("ESPN HTTP Error");
     
     const scoreData = await scoreRes.json();
@@ -274,7 +315,8 @@ async function fetchMatchData() {
 
     if (!selectedEvent) throw new Error("Sem eventos na ESPN");
     
-    const summaryRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${selectedEvent.id}`);
+    // ADICIONADO lang=pt&region=br também no Summary
+    const summaryRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${selectedEvent.id}&lang=pt&region=br`);
     if (!summaryRes.ok) throw new Error("ESPN Summary Error");
     
     const summaryData = await summaryRes.json();
@@ -333,8 +375,16 @@ function renderHeader(headerData) {
   const awayForm = away?.formation || 'Oculta';
   
   const state = comp?.status?.type?.state;
-  const clockInfo = comp?.status?.displayClock || comp?.status?.type?.detail || "Em Breve";
+  let clockInfo = comp?.status?.displayClock || comp?.status?.type?.detail || "Em Breve";
   
+  // TRADUÇÃO FORÇADA DE STATUS (Caso a API mande em inglês mesmo com lang=pt)
+  clockInfo = clockInfo.replace(/Half Time/i, 'Intervalo')
+                       .replace(/Full Time/i, 'Fim de Jogo')
+                       .replace(/First Half/i, '1º Tempo')
+                       .replace(/Second Half/i, '2º Tempo')
+                       .replace(/Halftime/i, 'Intervalo')
+                       .replace(/End of/i, 'Fim do');
+
   let statusHTML = '';
   if (state === 'in') statusHTML = `<div class="match-status">● AO VIVO - ${clockInfo}</div>`;
   else if (state === 'post') statusHTML = `<div class="match-status offline">Encerrado</div>`;
@@ -417,7 +467,6 @@ function renderStats(boxscore) {
   const awayStats = boxscore.teams?.[1]?.statistics || [];
   let html = '';
 
-  // Modificado para capturar a chave 'wonCorners' (que a ESPN usa agora para Escanteios)
   ['possessionPct', 'totalShots', 'shotsOnTarget', 'foulsCommitted', 'wonCorners'].forEach(key => {
     const hStat = homeStats.find(s => s.name === key || s.name === 'corners');
     const aStat = awayStats.find(s => s.name === key || s.name === 'corners');
