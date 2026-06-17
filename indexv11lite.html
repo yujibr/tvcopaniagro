@@ -174,8 +174,8 @@ body{
   .scroll-content { transform: none !important; }
 }
 
-/* ── OTIMIZAÇÃO DE ALTURA PARA TVS 720p / ANDROID TV BOX ── */
-@media (max-height: 768px) {
+/* ── OTIMIZAÇÃO TOTAL PARA 720p (TV BOX ANDROID) ── */
+@media (max-height: 768px), (max-width: 1280px) {
   /* 1. Comprime o Header */
   .hero { padding: 8px 16px; }
   .niagro-logo { width: 130px; height: 26px; }
@@ -184,23 +184,16 @@ body{
   .trophy { font-size: 26px; }
 
   /* 2. Reduz o painel de estatísticas */
-  .main { padding: 8px; gap: 10px; }
+  .main { padding: 8px; gap: 12px; }
   .stats-row { gap: 6px; margin-bottom: 0; }
-  .stat-card { padding: 6px; }
+  .stat-card { padding: 6px; border-radius: 8px; }
   .stat-num { font-size: 20px; }
 
-  /* 3. ACHATA o bloco do Brasil para formato horizontal */
-  .brazil-highlight { 
-    display: flex; 
-    align-items: center; 
-    padding: 6px 12px; 
-    gap: 16px;
-    margin-bottom: 2px;
-  }
+  /* 3. Achata o bloco do Brasil para formato horizontal */
+  .brazil-highlight { display: flex; align-items: center; padding: 6px 12px; gap: 16px; margin-bottom: 2px; }
   .brazil-header { margin-bottom: 0; min-width: max-content; }
   .brazil-title { font-size: 15px; }
-  .brazil-sub { display: none; } /* Oculta o subtítulo para poupar espaço vertical */
-  
+  .brazil-sub { display: none; } 
   .br-fixtures { display: flex; flex: 1; gap: 8px; }
   .br-fix { padding: 4px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
   .br-fix .opp { font-size: 16px; margin: 0; }
@@ -210,7 +203,7 @@ body{
   .section-title.live-focus { font-size: 18px; padding-bottom: 4px; margin-bottom: 6px; }
   .section-title.live-focus .accent { height: 18px; width: 5px; }
 
-  /* 5. Diminui consideravelmente os cartões de jogos e placares */
+  /* 5. Ajustes do Painel Esquerdo (Jogos) */
   #live-games-list { gap: 8px; }
   #live-games-list .game-card { padding: 10px 14px; border-radius: 12px; }
   #live-games-list .game-card.live-game { margin: 2px 0 8px 0; padding: 12px 14px; }
@@ -224,11 +217,27 @@ body{
   .team-flag { font-size: 20px; }
   .score { font-size: 24px; }
   .team-name { font-size: 12px; margin-top: 2px; }
+
+  /* ── 6. CORREÇÃO DAS TABELAS CORTADAS (Painel Direito) ── */
+  /* Muda para 1 coluna apenas para aproveitar 100% da largura disponível */
+  .groups-grid { grid-template-columns: 1fr; gap: 10px; }
+  .group-card { padding: 8px 10px; border-radius: 8px; }
+  .group-header { font-size: 16px; margin-bottom: 4px; padding-bottom: 4px; }
   
-  /* Ajustes tabela direita */
-  .group-card { padding: 8px 10px; }
-  .group-header { font-size: 15px; margin-bottom: 4px; }
-  .standings-table th, .standings-table td { padding: 3px 2px; font-size: 11px; }
+  /* Reduz paddings e garante que o nome dos países não quebre a linha */
+  .standings-table { font-size: 12px; }
+  .standings-table th, .standings-table td { padding: 4px 2px; font-size: 11px; }
+  .standings-table td.left { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+  .flag-sm { font-size: 14px; margin-right: 4px; }
+  .pts { font-size: 14px; }
+
+  /* 7. Ajuste do chaveamento (Mata-Mata) para evitar distorções */
+  .knockout-wrap { gap: 12px; min-height: 400px; padding-bottom: 10px; }
+  .bracket-col { width: 180px; }
+  .bracket-title { font-size: 15px; margin-bottom: 8px; }
+  .bracket-match { padding: 6px 8px; border-radius: 6px; }
+  .b-team { font-size: 11px; padding: 4px 0; }
+  .b-score { font-size: 14px; }
 }
 </style>
 </head>
