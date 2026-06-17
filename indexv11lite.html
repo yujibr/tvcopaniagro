@@ -173,6 +173,63 @@ body{
   .scroll-zone { mask-image: none; -webkit-mask-image: none; overflow: visible; }
   .scroll-content { transform: none !important; }
 }
+
+/* ── OTIMIZAÇÃO DE ALTURA PARA TVS 720p / ANDROID TV BOX ── */
+@media (max-height: 768px) {
+  /* 1. Comprime o Header */
+  .hero { padding: 8px 16px; }
+  .niagro-logo { width: 130px; height: 26px; }
+  .title-block h1 { font-size: 22px; }
+  .clock { font-size: 22px; }
+  .trophy { font-size: 26px; }
+
+  /* 2. Reduz o painel de estatísticas */
+  .main { padding: 8px; gap: 10px; }
+  .stats-row { gap: 6px; margin-bottom: 0; }
+  .stat-card { padding: 6px; }
+  .stat-num { font-size: 20px; }
+
+  /* 3. ACHATA o bloco do Brasil para formato horizontal */
+  .brazil-highlight { 
+    display: flex; 
+    align-items: center; 
+    padding: 6px 12px; 
+    gap: 16px;
+    margin-bottom: 2px;
+  }
+  .brazil-header { margin-bottom: 0; min-width: max-content; }
+  .brazil-title { font-size: 15px; }
+  .brazil-sub { display: none; } /* Oculta o subtítulo para poupar espaço vertical */
+  
+  .br-fixtures { display: flex; flex: 1; gap: 8px; }
+  .br-fix { padding: 4px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .br-fix .opp { font-size: 16px; margin: 0; }
+  
+  /* 4. Ganha espaço nos títulos das seções */
+  .section-title { font-size: 16px; padding: 2px 0; margin-bottom: 4px; }
+  .section-title.live-focus { font-size: 18px; padding-bottom: 4px; margin-bottom: 6px; }
+  .section-title.live-focus .accent { height: 18px; width: 5px; }
+
+  /* 5. Diminui consideravelmente os cartões de jogos e placares */
+  #live-games-list { gap: 8px; }
+  #live-games-list .game-card { padding: 10px 14px; border-radius: 12px; }
+  #live-games-list .game-card.live-game { margin: 2px 0 8px 0; padding: 12px 14px; }
+  #live-games-list .team-flag { font-size: 26px; }
+  #live-games-list .score { font-size: 28px; }
+  #live-games-list .score.live-score { font-size: 34px; }
+  #live-games-list .team-name { font-size: 14px; }
+  #live-games-list .game-time { font-size: 12px; margin-top: 4px; }
+
+  .game-card { padding: 8px 12px; gap: 8px; border-radius: 10px; }
+  .team-flag { font-size: 20px; }
+  .score { font-size: 24px; }
+  .team-name { font-size: 12px; margin-top: 2px; }
+  
+  /* Ajustes tabela direita */
+  .group-card { padding: 8px 10px; }
+  .group-header { font-size: 15px; margin-bottom: 4px; }
+  .standings-table th, .standings-table td { padding: 3px 2px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
