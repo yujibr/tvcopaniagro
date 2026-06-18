@@ -447,18 +447,20 @@ body{
     <div class="scroll-zone" id="left-scroll-zone">
       <div class="scroll-content" id="left-scroll-content">
         
+        <!-- PRÓXIMOS JOGOS AGORA VEM PRIMEIRO -->
         <div class="section-title" style="margin-top:0">
+          <div class="accent"></div>Próximos Jogos (4 Dias)
+        </div>
+        <div class="games-list" id="upcoming-games-list">
+          <div class="empty-state">Buscando agenda...</div>
+        </div>
+
+        <!-- JOGOS REALIZADOS VEM DEPOIS -->
+        <div class="section-title" style="margin-top:12px">
           <div class="accent"></div>Jogos Realizados
         </div>
         <div class="games-list" id="completed-games-list">
           <div class="empty-state">Buscando jogos...</div>
-        </div>
-
-        <div class="section-title" style="margin-top:12px">
-          <div class="accent"></div>Próximos Jogos
-        </div>
-        <div class="games-list" id="upcoming-games-list">
-          <div class="empty-state">Buscando agenda...</div>
         </div>
 
         <div style="height:60px"></div>
@@ -660,7 +662,16 @@ function buildGameCard(g){
 function renderGames(){
   const live    = allGames.filter(g=>g.isLive);
   const done    = allGames.filter(g=>g.isDone).sort((a,b) => new Date(b.date) - new Date(a.date));
-  const upcoming   = allGames.filter(g=>g.isPre).sort((a,b) => new Date(a.date) - new Date(b.date));
+  
+  // NOVA LÓGICA DE FILTRO DE 4 DIAS PARA PRÓXIMOS JOGOS
+  const dataLimite = new Date();
+  dataLimite.setDate(dataLimite.getDate() + 4);
+
+  const upcoming = allGames.filter(g => {
+    if (!g.isPre) return false;
+    const gameDate = new Date(g.date);
+    return gameDate <= dataLimite;
+  }).sort((a,b) => new Date(a.date) - new Date(b.date));
 
   const liveBadge = document.getElementById('live-badge');
   if (liveBadge) {
@@ -724,15 +735,15 @@ function renderGames(){
         A bola não está rolando no momento.<br>O Lango Torcedor está aquecendo para a próxima partida!
        </div>`;
 
-  // Renderização 2: Jogos Realizados Completos
+  // Renderização 2: Próximos Jogos (AGORA RENDERIZADO ANTES)
+  document.getElementById('upcoming-games-list').innerHTML = upcoming.length
+    ? upcoming.map(buildGameCard).join('')
+    : `<div class="empty-state">Sem jogos agendados para os próximos 4 dias.</div>`;
+
+  // Renderização 3: Jogos Realizados Completos (AGORA RENDERIZADO DEPOIS)
   document.getElementById('completed-games-list').innerHTML = done.length
     ? done.map(buildGameCard).join('')
     : `<div class="empty-state">Nenhum jogo finalizado ainda.</div>`;
-
-  // Renderização 3: Próximos Jogos
-  document.getElementById('upcoming-games-list').innerHTML = upcoming.length
-    ? upcoming.map(buildGameCard).join('')
-    : `<div class="empty-state">Sem jogos agendados para os próximos dias.</div>`;
 
   buildTicker([...live,...done.slice(0,6),...upcoming.slice(0,6)]);
 }
