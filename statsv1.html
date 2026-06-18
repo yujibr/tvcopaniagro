@@ -111,6 +111,42 @@ body{
   .trivia-title { font-size: 18px; }
   .trivia-text { font-size: 14px; min-height: 60px; }
 }
+
+/* ── RESPONSIVIDADE PARA TELEMÓVEIS (NOVO) ── */
+@media (max-width: 768px) {
+  html, body { height: auto; overflow: auto; }
+  .watermark { display: none; } /* Oculta marca d'água no celular para não atrapalhar */
+  
+  .hero { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
+  .hero-left { flex-direction: column; gap: 8px; }
+  .hero-right > div { text-align: center !important; margin-top: 8px; }
+  .title-block h1 { font-size: 24px; }
+  .title-block .sub { font-size: 10px; }
+  
+  /* Transforma em 1 Coluna */
+  .main-grid { display: flex; flex-direction: column; grid-template-columns: 1fr; padding: 12px; gap: 20px; overflow: visible; }
+  .panel-section { overflow: visible; }
+  .odds-list { overflow: visible; padding-right: 0; }
+  
+  /* Ajuste dos Cartões de Jogo */
+  .odd-card { padding: 14px; }
+  .teams-row { gap: 8px; }
+  /* Empilha Bandeira + Nome */
+  .team-name { font-size: 14px; width: 42%; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+  .team-name.right { flex-direction: column; }
+  .flag { font-size: 28px; }
+  .vs { font-size: 16px; width: 10%; text-align: center; }
+  
+  /* Empilha as Probabilidades */
+  .prob-labels { flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
+  
+  .favorites-list { padding: 16px; }
+  .fav-header { font-size: 13px; }
+  
+  .trivia-box { padding: 20px; }
+  .trivia-title { font-size: 20px; }
+  .trivia-text { font-size: 14px; }
+}
 </style>
 </head>
 <body>
@@ -170,8 +206,6 @@ body{
 
 <script>
 // ── 1. BASE DE DADOS HISTÓRICA (PESO INICIAL) ──
-// Estes valores servem como "Lastro" (base estatística). Eles serão mesclados
-// com os gols reais do torneio para gerar o status dinâmico.
 const TEAM_STATS_BASE = {
   'Brazil': { att: 1.8, def: 0.6 }, 'France': { att: 1.7, def: 0.7 }, 'England': { att: 1.6, def: 0.7 },
   'Argentina': { att: 1.5, def: 0.6 }, 'Spain': { att: 1.5, def: 0.8 }, 'Germany': { att: 1.6, def: 0.9 },
@@ -219,7 +253,6 @@ async function fetchRealMatches() {
     const startDate = '20260611'; 
     const endDate = '20260719';
     
-    // Busca os Jogos e as Classificações (para gerar as estatísticas reais) ao mesmo tempo
     const [resScore, resStand] = await Promise.all([
       fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`),
       fetch(`https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`).catch(()=>null)
@@ -227,7 +260,6 @@ async function fetchRealMatches() {
 
     if (!resScore.ok) throw new Error("Erro na API de placares");
 
-    // Monta a inteligência baseada na tabela de classificação real (Suavização Bayesiana)
     if (resStand && resStand.ok) {
         buildDynamicStats(await resStand.json());
     }
@@ -244,7 +276,6 @@ async function fetchRealMatches() {
     document.getElementById('api-status').style.color = "#FF5555";
     renderOdds(getFallbackMatches()); 
   } finally {
-    // Esconde o loading overlay após a primeira carga
     setTimeout(() => {
       const loader = document.getElementById('loader');
       if (loader) loader.classList.add('hidden');
@@ -252,7 +283,6 @@ async function fetchRealMatches() {
   }
 }
 
-// Mescla Gols Reais do Torneio com a Força Base
 function buildDynamicStats(data) {
   const secs = data?.standings?.groups || [];
   secs.forEach(grp => {
@@ -266,8 +296,6 @@ function buildDynamicStats(data) {
       
       const base = TEAM_STATS_BASE[name] || { att: 1.0, def: 1.0 };
       
-      // Inteligência: Impede que um time que fez 0 gols fique com ataque 0 (quebraria a IA).
-      // Usa um peso equivalente a 2 jogos do ranking histórico.
       const dynamicAtt = (gf + (base.att * 2)) / (gp + 2);
       const dynamicDef = (ga + (base.def * 2)) / (gp + 2);
       
@@ -278,7 +306,7 @@ function buildDynamicStats(data) {
 
 function processAndRenderGames(data) {
   const upcomingGames = [];
-  const now = new Date(); // Hora exata da máquina local
+  const now = new Date(); 
   
   (data?.events || []).forEach(ev => {
     const comp = ev.competitions?.[0];
@@ -287,7 +315,6 @@ function processAndRenderGames(data) {
     const state = comp.status?.type?.state || 'pre';
     const matchDate = new Date(ev.date);
     
-    // REGRA DE OURO: Ignora o jogo se não for 'pre' OU se a data já tiver passado.
     if (state !== 'pre' || matchDate <= now) return;
 
     const home = comp.competitors?.find(c=>c.homeAway==='home')?.team?.name || '';
@@ -297,7 +324,6 @@ function processAndRenderGames(data) {
     upcomingGames.push({ home, away, date: ev.date, group: ev.groups?.[0]?.name || 'Fase de Grupos' });
   });
 
-  // Ordena cronologicamente e isola os próximos 4
   upcomingGames.sort((a,b) => new Date(a.date) - new Date(b.date));
   const top4Games = upcomingGames.slice(0, 4);
   
@@ -345,7 +371,6 @@ function poisson(k, lambda) {
 }
 
 function calculateMatchOdds(home, away) {
-  // Usa o Status Dinâmico (Realidade) ou cai pro Status Base (Histórico)
   const homeStats = DYNAMIC_TEAM_STATS[home] || TEAM_STATS_BASE[home] || { att: 1.0, def: 1.0 };
   const awayStats = DYNAMIC_TEAM_STATS[away] || TEAM_STATS_BASE[away] || { att: 1.0, def: 1.0 };
   const homeAdvantage = 1.05; 
@@ -481,10 +506,7 @@ function updateTrivia() {
 
 // ── INICIALIZAÇÃO ──
 window.addEventListener('DOMContentLoaded', () => {
-  // Inicializa a interface com a API Real
   fetchRealMatches();
-  
-  // Atualiza os dados da API a cada 60 segundos
   setInterval(fetchRealMatches, 60000);
   
   renderFavorites();
@@ -492,7 +514,6 @@ window.addEventListener('DOMContentLoaded', () => {
   updateTrivia();
   setInterval(updateTrivia, triviaInterval);
 
-  // Relógio
   setInterval(() => {
     const now = new Date();
     document.getElementById('clock').textContent = 
