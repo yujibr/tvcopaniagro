@@ -55,10 +55,10 @@ body{
 .odds-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 8px; }
 .odd-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 .odd-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase;}
-.teams-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.team-name { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; width: 40%; text-transform: uppercase;}
+.teams-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-bottom: 16px; }
+.team-name { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; text-transform: uppercase; justify-content: flex-start;}
 .team-name.right { justify-content: flex-end; }
-.vs { font-family: 'Bebas Neue'; font-size: 20px; color: rgba(255,255,255,0.3); }
+.vs { font-family: 'Bebas Neue'; font-size: 20px; color: rgba(255,255,255,0.3); text-align: center; }
 .flag { font-size: 24px; }
 
 .prob-bar-container { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.5); gap: 2px;}
@@ -66,10 +66,14 @@ body{
 .prob-home { background: #4CAF50; }
 .prob-draw { background: #9E9E9E; }
 .prob-away { background: #2196F3; }
-.prob-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-top: 6px; color: rgba(255,255,255,0.7); }
 
-/* ── FAVORITOS AO TÍTULO (CHART) ── */
-.favorites-list { display: flex; flex-direction: column; gap: 14px; background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); }
+.prob-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-top: 8px; color: rgba(255,255,255,0.8); gap: 8px;}
+.lbl-h { color: #4CAF50; }
+.lbl-d { color: #9E9E9E; }
+.lbl-a { color: #2196F3; }
+
+/* ── FAVORITOS AO TÍTULO ── */
+.favorites-list { display: flex; flex-direction: column; gap: 14px; background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); flex-shrink:0;}
 .fav-item { display: flex; flex-direction: column; gap: 6px; }
 .fav-header { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; text-transform: uppercase; }
 .fav-name { display: flex; align-items: center; gap: 8px; }
@@ -77,21 +81,22 @@ body{
 .fav-bar-track { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; }
 .fav-bar-fill { height: 100%; width: 0%; border-radius: 4px; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-/* ── CURIOSIDADES (TRIVIA CAROUSEL) ── */
-.trivia-box { background: linear-gradient(135deg, rgba(255,223,0,0.1), rgba(6,33,10,0.8)); border: 1px solid rgba(255,223,0,0.3); border-radius: 16px; padding: 24px; margin-top: 10px; flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-.trivia-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.9; }
-.trivia-title { font-family: 'Bebas Neue'; font-size: 22px; color: var(--gold); margin-bottom: 8px; letter-spacing: 1px; }
-.trivia-text { font-size: 16px; line-height: 1.6; color: var(--text); font-weight: 500; min-height: 80px; transition: opacity 0.5s ease; }
-.progress-line { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); width: 0%; transition: width linear; }
+/* ── CHAVEAMENTO MATA-MATA ── */
+.bracket-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 8px; max-height: 420px; }
+.bracket-match { background: linear-gradient(135deg, rgba(6,33,10,0.85), rgba(0,0,0,0.7)); border: 1px solid rgba(255,223,0,0.25); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+.bracket-team { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; width: 38%; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bracket-team.right { justify-content: flex-end; text-align: right; }
+.bracket-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 24%; }
+.bracket-seed { font-size: 10px; color: var(--gold); letter-spacing: 1px; margin-bottom: 2px; text-transform: uppercase; font-weight: 700;}
+.bracket-vs { font-family: 'Bebas Neue'; font-size: 18px; color: rgba(255,255,255,0.3); }
 
 /* ── LOADING OVERLAY ── */
-.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2, 13, 4, 0.95); backdrop-filter: blur(20px); display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .6s}
-.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2, 13, 4, 1); display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.5s ease;}
 .spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gold)}
 .loading-sub{font-size:15px;color:var(--muted);margin-top:10px;letter-spacing:1px; font-weight: 500;}
-.lango-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(255,223,0,0.5); margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+.lango-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(255,223,0,0.5); margin-bottom: 16px;}
 
 /* ── RESPONSIVIDADE (TV BOX 720p) ── */
 @media (max-height: 768px), (max-width: 1280px) {
@@ -102,63 +107,50 @@ body{
   .odd-card { padding: 12px; }
   .team-name { font-size: 15px; }
   .flag { font-size: 20px; }
-  .prob-bar-container { height: 10px; }
   .favorites-list { padding: 16px; gap: 10px; }
-  .fav-header { font-size: 12px; }
   .fav-pct { font-size: 18px; }
-  .trivia-box { padding: 16px; min-height: 150px; }
-  .trivia-icon { font-size: 30px; margin-bottom: 8px; }
-  .trivia-title { font-size: 18px; }
-  .trivia-text { font-size: 14px; min-height: 60px; }
+  .bracket-match { padding: 10px 12px; }
+  .bracket-team { font-size: 13px; }
 }
 
-/* ── RESPONSIVIDADE PARA TELEMÓVEIS (NOVO) ── */
+/* ── RESPONSIVIDADE PARA TELEMÓVEIS (MOBILE FIX) ── */
 @media (max-width: 768px) {
   html, body { height: auto; overflow: auto; }
-  .watermark { display: none; } /* Oculta marca d'água no celular para não atrapalhar */
-  
+  .watermark { display: none; }
   .hero { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
   .hero-left { flex-direction: column; gap: 8px; }
-  .hero-right > div { text-align: center !important; margin-top: 8px; }
+  .hero-right { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 8px; }
   .title-block h1 { font-size: 24px; }
-  .title-block .sub { font-size: 10px; }
   
-  /* Transforma em 1 Coluna */
-  .main-grid { display: flex; flex-direction: column; grid-template-columns: 1fr; padding: 12px; gap: 20px; overflow: visible; }
+  .main-grid { display: flex; flex-direction: column; padding: 12px; gap: 20px; overflow: visible; height: auto; }
   .panel-section { overflow: visible; }
-  .odds-list { overflow: visible; padding-right: 0; }
+  .odds-list, .bracket-list { overflow: visible; padding-right: 0; max-height: none; }
   
-  /* Ajuste dos Cartões de Jogo */
   .odd-card { padding: 14px; }
-  .teams-row { gap: 8px; }
-  /* Empilha Bandeira + Nome */
-  .team-name { font-size: 14px; width: 42%; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
-  .team-name.right { flex-direction: column; }
+  .teams-row { grid-template-columns: 1fr 24px 1fr; gap: 6px; align-items: start; margin-bottom: 12px; }
+  .team-name, .team-name.right { flex-direction: column; justify-content: flex-start; text-align: center; font-size: 12px; gap: 4px; word-break: break-word; }
   .flag { font-size: 28px; }
-  .vs { font-size: 16px; width: 10%; text-align: center; }
   
-  /* Empilha as Probabilidades */
-  .prob-labels { flex-direction: column; align-items: center; gap: 6px; font-size: 12px; }
+  .prob-labels { flex-direction: column; background: rgba(0,0,0,0.4); padding: 10px 14px; border-radius: 8px; margin-top: 14px; gap: 8px; }
+  .prob-labels > span { display: flex; justify-content: space-between; width: 100%; font-size: 13px; }
   
   .favorites-list { padding: 16px; }
-  .fav-header { font-size: 13px; }
-  
-  .trivia-box { padding: 20px; }
-  .trivia-title { font-size: 20px; }
-  .trivia-text { font-size: 14px; }
+  .bracket-match { flex-direction: row; padding: 12px; }
+  .bracket-team { font-size: 11px; width: 35%; flex-direction: column; text-align: center; gap: 4px;}
+  .bracket-team.right { flex-direction: column; }
+  .bracket-center { width: 30%; }
 }
 </style>
 </head>
 <body>
 
-<div class="watermark">V.22062026 - IA DINÂMICA - By Luciano Suzuki</div>
+<div class="watermark">V.26062026 - CHAVES REAIS - By Luciano Suzuki</div>
 
-<!-- TELA DE LOADING INICIAL -->
 <div class="loading-overlay" id="loader">
   <img src="lango_torcedor.jpg" alt="Lango Torcedor" class="lango-avatar" onerror="this.style.display='none'">
   <div class="spinner"></div>
   <div class="loading-title">CENTRAL DE INTELIGÊNCIA</div>
-  <div class="loading-sub" id="load-msg">O Lango Canarinho está calculando probabilidades...</div>
+  <div class="loading-sub" id="load-msg">Sincronizando tabelas oficiais...</div>
 </div>
 
 <div class="hero">
@@ -167,46 +159,62 @@ body{
     <div class="icon-brain">🧠</div>
     <div class="title-block">
       <h1>Central de Inteligência</h1>
-      <div class="sub">Previsões Matemáticas baseadas em dados reais da ESPN</div>
+      <div class="sub">Estatísticas, Odds e Chaveamento Oficial do Dia</div>
     </div>
   </div>
   <div class="hero-right">
-    <div style="text-align: right;">
-        <div style="font-family:'Bebas Neue'; font-size:26px; color:var(--gold); letter-spacing:2px;" id="clock">--:--</div>
-        <div style="font-size:11px; color:var(--muted); margin-top:2px;" id="api-status">Sincronizando dados...</div>
-    </div>
+    <div style="font-family:'Bebas Neue'; font-size:26px; color:var(--gold); letter-spacing:2px; text-align:right;" id="clock">--:--</div>
+    <div style="font-size:11px; color:var(--muted); margin-top:2px; text-align:right;" id="api-status">Conectando...</div>
   </div>
 </div>
 
 <div class="main-grid">
-  <!-- COLUNA ESQUERDA: Probabilidades dos Jogos -->
   <div class="panel-section">
-    <div class="section-title"><div class="accent"></div>Previsão: Próximos Jogos Reais</div>
+    <div class="section-title"><div class="accent"></div>Previsão: Próximos Jogos</div>
     <div class="odds-list" id="odds-container">
-      <div style="padding: 20px; text-align: center; color: var(--muted);">Processando algoritmos...</div>
+      <div style="padding: 20px; text-align: center; color: var(--muted);">Buscando agenda...</div>
     </div>
   </div>
 
-  <!-- COLUNA DIREITA: Favoritos e Curiosidades -->
   <div class="panel-section">
-    <div class="section-title"><div class="accent"></div>Chances de Título (Top 6)</div>
-    <div class="favorites-list" id="favorites-container">
-      <!-- Injetado via JS -->
-    </div>
+    <div class="section-title"><div class="accent"></div>Chances de Título (Top 4)</div>
+    <div class="favorites-list" id="favorites-container"></div>
 
-    <div class="section-title" style="margin-top: 8px;"><div class="accent"></div>Você Sabia?</div>
-    <div class="trivia-box">
-      <div class="trivia-icon" id="trivia-icon">🌎</div>
-      <div class="trivia-title">Copa Histórica</div>
-      <div class="trivia-text" id="trivia-text">Carregando dados...</div>
-      <div class="progress-line" id="trivia-progress"></div>
+    <div class="section-title" style="margin-top: 8px;"><div class="accent"></div>Simulação: Chaves de 16 Avos (Hoje)</div>
+    <div class="bracket-list" id="bracket-container">
+      <div style="padding: 20px; text-align: center; color: var(--muted);">Calculando cruzamentos da FIFA...</div>
     </div>
   </div>
 </div>
 
 <script>
-// ── 1. BASE DE DADOS HISTÓRICA (PESO INICIAL) ──
-const TEAM_STATS_BASE = {
+// ── ESCUDO ANTI-TRAVAMENTO GLOBAL (Força destravar em 3.5 segundos) ──
+function removeLoader() {
+  var loader = document.getElementById('loader');
+  if (loader) {
+    loader.style.opacity = '0';
+    setTimeout(function() { loader.style.display = 'none'; }, 500);
+  }
+}
+setTimeout(removeLoader, 3500); 
+
+// ── 1. GRUPOS OFICIAIS COPA 2026 E BASE PREDITIVA ──
+var GROUPS_STATIC = [
+  {name:'A',teams:['Mexico','South Africa','South Korea','Czechia']},
+  {name:'B',teams:['Canada','Qatar','Switzerland','Bosnia & Herzegovina']},
+  {name:'C',teams:['Brazil','Morocco','Haiti','Scotland']},
+  {name:'D',teams:['United States','Paraguay','Australia','Türkiye']},
+  {name:'E',teams:['Germany','Curaçao',"Côte d'Ivoire",'Ecuador']},
+  {name:'F',teams:['Netherlands','Japan','Sweden','Tunisia']},
+  {name:'G',teams:['Belgium','Egypt','Iran','New Zealand']},
+  {name:'H',teams:['Spain','Cabo Verde','Saudi Arabia','Uruguay']},
+  {name:'I',teams:['France','Senegal','Iraq','Norway']},
+  {name:'J',teams:['Argentina','Algeria','Austria','Jordan']},
+  {name:'K',teams:['Portugal','DR Congo','Uzbekistan','Colombia']},
+  {name:'L',teams:['England','Croatia','Ghana','Panama']}
+];
+
+var TEAM_STATS_BASE = {
   'Brazil': { att: 1.8, def: 0.6 }, 'France': { att: 1.7, def: 0.7 }, 'England': { att: 1.6, def: 0.7 },
   'Argentina': { att: 1.5, def: 0.6 }, 'Spain': { att: 1.5, def: 0.8 }, 'Germany': { att: 1.6, def: 0.9 },
   'Portugal': { att: 1.5, def: 0.8 }, 'Netherlands': { att: 1.4, def: 0.9 }, 'Italy': { att: 1.2, def: 0.6 },
@@ -217,9 +225,10 @@ const TEAM_STATS_BASE = {
   'Colombia': { att: 1.2, def: 0.9 }, 'Croatia': { att: 1.1, def: 0.8 }, 'Denmark': { att: 1.1, def: 0.9 }
 };
 
-let DYNAMIC_TEAM_STATS = {};
+var DYNAMIC_TEAM_STATS = {};
+var CURRENT_GROUPS = {}; // Recebe as tabelas calculadas em tempo real
 
-const FLAGS = { 
+var FLAGS = { 
   'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czechia':'🇨🇿','Czech Republic':'🇨🇿','Canada':'🇨🇦',
   'Qatar':'🇶🇦','Switzerland':'🇨🇭','Bosnia & Herzegovina':'🇧🇦','Bosnia and Herzegovina':'🇧🇦','Brazil':'🇧🇷',
   'Morocco':'🇲🇦','Haiti':'🇭🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','USA':'🇺🇸','United States':'🇺🇸','Paraguay':'🇵🇾','Australia':'🇦🇺',
@@ -231,7 +240,7 @@ const FLAGS = {
   'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croatia':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦','Denmark':'🇩🇰','Italy':'🇮🇹' 
 };
 
-const PT_NAMES = { 
+var PT_NAMES = { 
   'Mexico':'México', 'South Africa':'África do Sul', 'South Korea':'Coreia do Sul', 'Czechia':'Tchéquia', 'Czech Republic':'Tchéquia',
   'Canada':'Canadá', 'Qatar':'Catar', 'Switzerland':'Suíça', 'Bosnia & Herzegovina':'Bósnia e Herz.', 'Bosnia and Herzegovina':'Bósnia e Herz.',
   'Brazil':'Brasil', 'Morocco':'Marrocos', 'Haiti':'Haiti', 'Scotland':'Escócia','USA':'Estados Unidos', 'United States':'Estados Unidos', 
@@ -244,109 +253,155 @@ const PT_NAMES = {
   'Ghana':'Gana', 'Panama':'Panamá','Denmark':'Dinamarca', 'Italy':'Itália'
 };
 
-function flag(n) { return FLAGS[n] || '🏳️'; }
-function pt(n) { return PT_NAMES[n] || n; }
+function flag(n) { return FLAGS[n] ? FLAGS[n] : '🏳️'; }
+function pt(n) { return PT_NAMES[n] ? PT_NAMES[n] : n; }
 
-// ── 2. LÓGICA DE BUSCA DE DADOS (API ESPN) ──
+// Helper seguro ES5 para buscar num array de objetos
+function getObjByName(arr, name) {
+  for (var i = 0; i < arr.length; i++) { if (arr[i].name === name) return arr[i]; }
+  return null;
+}
+
+// ── 2. CÁLCULO DAS TABELAS DE CLASSIFICAÇÃO LOCAIS (GOLPE DE GÊNIO) ──
+function calculateStandingsLocally(events) {
+  var table = {};
+  GROUPS_STATIC.forEach(function(g) {
+    table[g.name] = g.teams.map(function(t) {
+      return { name: t, pts: 0, v: 0, e: 0, d: 0, gp: 0, gc: 0 };
+    });
+  });
+
+  if (events && events.length > 0) {
+    events.forEach(function(ev) {
+      var comp = (ev.competitions && ev.competitions.length > 0) ? ev.competitions[0] : null;
+      if (!comp) return;
+
+      var state = (comp.status && comp.status.type && comp.status.type.state) ? comp.status.type.state : 'pre';
+      if (state === 'pre') return; // ignora jogos futuros
+
+      var hComp = null; var aComp = null;
+      for (var c = 0; c < comp.competitors.length; c++) {
+        if (comp.competitors[c].homeAway === 'home') hComp = comp.competitors[c];
+        if (comp.competitors[c].homeAway === 'away') aComp = comp.competitors[c];
+      }
+      if (!hComp || !aComp || !hComp.team || !aComp.team) return;
+
+      var hName = hComp.team.name; var aName = aComp.team.name;
+      var hScore = parseInt(hComp.score || 0, 10);
+      var aScore = parseInt(aComp.score || 0, 10);
+
+      var groupLetter = null;
+      GROUPS_STATIC.forEach(function(g) {
+        if (g.teams.indexOf(hName) !== -1 || g.teams.indexOf(aName) !== -1) groupLetter = g.name;
+      });
+
+      if (groupLetter && table[groupLetter]) {
+        var hRow = getObjByName(table[groupLetter], hName);
+        var aRow = getObjByName(table[groupLetter], aName);
+        if (hRow && aRow) {
+          hRow.gp += hScore; hRow.gc += aScore;
+          aRow.gp += aScore; aRow.gc += hScore;
+          if (hScore > aScore) { hRow.pts += 3; hRow.v += 1; aRow.d += 1; }
+          else if (hScore < aScore) { aRow.pts += 3; aRow.v += 1; hRow.d += 1; }
+          else { hRow.pts += 1; hRow.e += 1; aRow.pts += 1; aRow.e += 1; }
+        }
+      }
+    });
+  }
+
+  CURRENT_GROUPS = {};
+  GROUPS_STATIC.forEach(function(g) {
+    var rows = table[g.name];
+    rows.sort(function(a, b) {
+      var sgA = a.gp - a.gc; var sgB = b.gp - b.gc;
+      if (b.pts !== a.pts) return b.pts - a.pts;
+      if (sgB !== sgA) return sgB - sgA;
+      return b.gp - a.gp;
+    });
+
+    CURRENT_GROUPS[g.name] = rows.map(function(r){ return r.name; });
+    
+    // Alimenta a IA com o rendimento real dos times na Copa!
+    rows.forEach(function(r) {
+       var base = TEAM_STATS_BASE[r.name] ? TEAM_STATS_BASE[r.name] : { att: 1.0, def: 1.0 };
+       var jogos = r.v + r.e + r.d;
+       DYNAMIC_TEAM_STATS[r.name] = {
+         att: (r.gp + (base.att * 2)) / (jogos + 2),
+         def: (r.gc + (base.def * 2)) / (jogos + 2)
+       };
+    });
+  });
+}
+
+// ── 3. REQUISIÇÃO E RENDERIZAÇÃO DA ESPN ──
 async function fetchRealMatches() {
   try {
-    const startDate = '20260611'; 
-    const endDate = '20260719';
+    var startDate = '20260611'; var endDate = '20260719';
+    var url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=' + startDate + '-' + endDate + '&limit=200';
     
-    const [resScore, resStand] = await Promise.all([
-      fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`),
-      fetch(`https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`).catch(()=>null)
-    ]);
-
-    if (!resScore.ok) throw new Error("Erro na API de placares");
-
-    if (resStand && resStand.ok) {
-        buildDynamicStats(await resStand.json());
-    }
-
-    const scoreData = await resScore.json();
-    processAndRenderGames(scoreData);
+    var res = await fetch(url);
+    if (!res.ok) throw new Error("Erro API");
+    var data = await res.json();
+    
+    var events = (data && data.events) ? data.events : [];
+    
+    calculateStandingsLocally(events); // Monta a tabela do dia!
+    processAndRenderGames(events);     // Monta a coluna da esquerda!
     
     document.getElementById('api-status').textContent = "● ESPN AO VIVO";
     document.getElementById('api-status').style.color = "#4CAF50";
     
   } catch (error) {
-    console.error('Falha ao buscar dados reais:', error);
-    document.getElementById('api-status').textContent = "MODO OFFLINE (Mock)";
+    document.getElementById('api-status').textContent = "MODO OFFLINE";
     document.getElementById('api-status').style.color = "#FF5555";
+    calculateStandingsLocally([]); // Gera chaves estáticas de segurança
     renderOdds(getFallbackMatches()); 
   } finally {
-    setTimeout(() => {
-      const loader = document.getElementById('loader');
-      if (loader) loader.classList.add('hidden');
-    }, 800);
+    renderProjectedBracket(); // Injeta a projeção oficial das chaves!
+    removeLoader();
   }
 }
 
-function buildDynamicStats(data) {
-  const secs = data?.standings?.groups || [];
-  secs.forEach(grp => {
-    const entries = grp.standings || grp.entries || [];
-    entries.forEach(e => {
-      const name = e.team?.name || '';
-      const stats = e.stats || [];
-      const gp = +(stats.find(s => s.name === 'gamesPlayed')?.value || 0);
-      const gf = +(stats.find(s => s.name === 'pointsFor' || s.name === 'goalsFor')?.value || 0);
-      const ga = +(stats.find(s => s.name === 'pointsAgainst' || s.name === 'goalsAgainst')?.value || 0);
-      
-      const base = TEAM_STATS_BASE[name] || { att: 1.0, def: 1.0 };
-      
-      const dynamicAtt = (gf + (base.att * 2)) / (gp + 2);
-      const dynamicDef = (ga + (base.def * 2)) / (gp + 2);
-      
-      DYNAMIC_TEAM_STATS[name] = { att: dynamicAtt, def: dynamicDef };
-    });
-  });
-}
-
-function processAndRenderGames(data) {
-  const upcomingGames = [];
-  const now = new Date(); 
+function processAndRenderGames(events) {
+  var upcomingGames = [];
+  var now = new Date(); 
   
-  (data?.events || []).forEach(ev => {
-    const comp = ev.competitions?.[0];
+  events.forEach(function(ev) {
+    var comp = (ev.competitions && ev.competitions.length > 0) ? ev.competitions[0] : null;
     if(!comp) return;
-    
-    const state = comp.status?.type?.state || 'pre';
-    const matchDate = new Date(ev.date);
+    var state = (comp.status && comp.status.type && comp.status.type.state) ? comp.status.type.state : 'pre';
+    var matchDate = new Date(ev.date);
     
     if (state !== 'pre' || matchDate <= now) return;
 
-    const home = comp.competitors?.find(c=>c.homeAway==='home')?.team?.name || '';
-    const away = comp.competitors?.find(c=>c.homeAway==='away')?.team?.name || '';
-    if(!home || !away) return;
+    var hComp = null; var aComp = null;
+    for (var c = 0; c < comp.competitors.length; c++) {
+      if (comp.competitors[c].homeAway === 'home') hComp = comp.competitors[c].team.name;
+      if (comp.competitors[c].homeAway === 'away') aComp = comp.competitors[c].team.name;
+    }
+    if(!hComp || !aComp) return;
     
-    upcomingGames.push({ home, away, date: ev.date, group: ev.groups?.[0]?.name || 'Fase de Grupos' });
+    var groupName = (ev.groups && ev.groups.length > 0 && ev.groups[0].name) ? ev.groups[0].name : 'Fase de Grupos';
+    upcomingGames.push({ home: hComp, away: aComp, date: ev.date, group: groupName });
   });
 
-  upcomingGames.sort((a,b) => new Date(a.date) - new Date(b.date));
-  const top4Games = upcomingGames.slice(0, 4);
+  upcomingGames.sort(function(a,b) { return new Date(a.date) - new Date(b.date); });
+  var top4Games = upcomingGames.slice(0, 4);
   
-  const formattedMatches = top4Games.map(m => {
-    const d = new Date(m.date);
-    const dia = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth()+1).padStart(2, '0');
-    const hora = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + 'h';
+  var formattedMatches = top4Games.map(function(m) {
+    var d = new Date(m.date);
+    var dia = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth()+1).padStart(2, '0');
+    var hora = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + 'h';
+    var hoje = new Date(); var amanha = new Date(hoje); amanha.setDate(amanha.getDate() + 1);
     
-    const hoje = new Date();
-    const amanha = new Date(hoje); amanha.setDate(amanha.getDate() + 1);
-    
-    let dateStr = `${dia} · ${hora}`;
-    if (d.getDate() === hoje.getDate() && d.getMonth() === hoje.getMonth()) dateStr = `Hoje · ${hora}`;
-    if (d.getDate() === amanha.getDate() && d.getMonth() === amanha.getMonth()) dateStr = `Amanhã · ${hora}`;
+    var dateStr = dia + ' · ' + hora;
+    if (d.getDate() === hoje.getDate() && d.getMonth() === hoje.getMonth()) dateStr = 'Hoje · ' + hora;
+    if (d.getDate() === amanha.getDate() && d.getMonth() === amanha.getMonth()) dateStr = 'Amanhã · ' + hora;
 
     return { home: m.home, away: m.away, date: dateStr, phase: m.group };
   });
 
-  if (formattedMatches.length > 0) {
-    renderOdds(formattedMatches);
-  } else {
-    document.getElementById('odds-container').innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted)">Sem confrontos futuros na base de dados.</div>`;
-  }
+  renderOdds(formattedMatches.length > 0 ? formattedMatches : getFallbackMatches());
 }
 
 function getFallbackMatches() {
@@ -358,166 +413,115 @@ function getFallbackMatches() {
   ];
 }
 
-// ── 3. FUNÇÕES MATEMÁTICAS (IA POISSON) ──
+// ── 4. IA POISSON ──
 function factorial(n) {
-  if (n === 0 || n === 1) return 1;
-  let result = 1;
-  for (let i = 2; i <= n; i++) result *= i;
-  return result;
+  if (n === 0 || n === 1) return 1; var res = 1;
+  for (var i = 2; i <= n; i++) res *= i; return res;
 }
-
-function poisson(k, lambda) {
-  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-}
+function poisson(k, lambda) { return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k); }
 
 function calculateMatchOdds(home, away) {
-  const homeStats = DYNAMIC_TEAM_STATS[home] || TEAM_STATS_BASE[home] || { att: 1.0, def: 1.0 };
-  const awayStats = DYNAMIC_TEAM_STATS[away] || TEAM_STATS_BASE[away] || { att: 1.0, def: 1.0 };
-  const homeAdvantage = 1.05; 
+  var homeStats = DYNAMIC_TEAM_STATS[home] ? DYNAMIC_TEAM_STATS[home] : (TEAM_STATS_BASE[home] ? TEAM_STATS_BASE[home] : { att: 1.0, def: 1.0 });
+  var awayStats = DYNAMIC_TEAM_STATS[away] ? DYNAMIC_TEAM_STATS[away] : (TEAM_STATS_BASE[away] ? TEAM_STATS_BASE[away] : { att: 1.0, def: 1.0 });
+  
+  var expectedGoalsHome = homeStats.att * awayStats.def * 1.05;
+  var expectedGoalsAway = awayStats.att * homeStats.def;
+  var probHomeWin = 0; var probDraw = 0; var probAwayWin = 0;
 
-  const expectedGoalsHome = homeStats.att * awayStats.def * homeAdvantage;
-  const expectedGoalsAway = awayStats.att * homeStats.def;
-
-  let probHomeWin = 0; let probDraw = 0; let probAwayWin = 0;
-  const maxGoalsToSimulate = 5;
-
-  for (let goalsHome = 0; goalsHome <= maxGoalsToSimulate; goalsHome++) {
-    for (let goalsAway = 0; goalsAway <= maxGoalsToSimulate; goalsAway++) {
-      const probScore = poisson(goalsHome, expectedGoalsHome) * poisson(goalsAway, expectedGoalsAway);
-      if (goalsHome > goalsAway) probHomeWin += probScore;
-      else if (goalsHome === goalsAway) probDraw += probScore;
-      else probAwayWin += probScore;
+  for (var gh = 0; gh <= 5; gh++) {
+    for (var ga = 0; ga <= 5; ga++) {
+      var probScore = poisson(gh, expectedGoalsHome) * poisson(ga, expectedGoalsAway);
+      if (gh > ga) probHomeWin += probScore; else if (gh === ga) probDraw += probScore; else probAwayWin += probScore;
     }
   }
 
-  const total = probHomeWin + probDraw + probAwayWin;
-  return {
-    h: Math.round((probHomeWin / total) * 100),
-    d: Math.round((probDraw / total) * 100),
-    a: Math.round((probAwayWin / total) * 100)
-  };
+  var total = probHomeWin + probDraw + probAwayWin || 1; 
+  return { h: Math.round((probHomeWin / total) * 100), d: Math.round((probDraw / total) * 100), a: Math.round((probAwayWin / total) * 100) };
 }
 
-// ── 4. RENDERIZAÇÃO ──
+// ── 5. PLOTAGEM DA TELA ──
 function renderOdds(matchesArray) {
-  const container = document.getElementById('odds-container');
-  let html = '';
-
-  matchesArray.forEach(m => {
-    const odds = calculateMatchOdds(m.home, m.away);
-    const phaseName = (m.phase || 'Fase de Grupos').replace(/Group\s*/i, 'Grupo ');
-    
-    html += `
-      <div class="odd-card">
-        <div class="odd-header"><span>${phaseName}</span><span style="color:var(--gold)">${m.date}</span></div>
-        <div class="teams-row">
-          <div class="team-name"><span class="flag">${flag(m.home)}</span> ${pt(m.home)}</div>
-          <div class="vs">X</div>
-          <div class="team-name right">${pt(m.away)} <span class="flag">${flag(m.away)}</span></div>
-        </div>
-        <div class="prob-bar-container">
-          <div class="prob-segment prob-home" style="width: ${odds.h}%"></div>
-          <div class="prob-segment prob-draw" style="width: ${odds.d}%"></div>
-          <div class="prob-segment prob-away" style="width: ${odds.a}%"></div>
-        </div>
-        <div class="prob-labels">
-          <span style="color:#4CAF50">Vitória ${pt(m.home)}: ${odds.h}%</span>
-          <span style="color:#9E9E9E">Empate: ${odds.d}%</span>
-          <span style="color:#2196F3">Vitória ${pt(m.away)}: ${odds.a}%</span>
-        </div>
-      </div>
-    `;
+  var container = document.getElementById('odds-container'); var html = '';
+  matchesArray.forEach(function(m) {
+    var odds = calculateMatchOdds(m.home, m.away);
+    var phaseName = (m.phase || 'Fase de Grupos').replace(/Group\s*/i, 'Grupo ');
+    html += '<div class="odd-card">' +
+              '<div class="odd-header"><span>' + phaseName + '</span><span style="color:var(--gold)">' + m.date + '</span></div>' +
+              '<div class="teams-row">' +
+                '<div class="team-name"><span class="flag">' + flag(m.home) + '</span> ' + pt(m.home) + '</div>' +
+                '<div class="vs">X</div>' +
+                '<div class="team-name right"><span class="flag">' + flag(m.away) + '</span> ' + pt(m.away) + '</div>' +
+              '</div>' +
+              '<div class="prob-bar-container">' +
+                '<div class="prob-segment prob-home" style="width: ' + odds.h + '%"></div>' +
+                '<div class="prob-segment prob-draw" style="width: ' + odds.d + '%"></div>' +
+                '<div class="prob-segment prob-away" style="width: ' + odds.a + '%"></div>' +
+              '</div>' +
+              '<div class="prob-labels">' +
+                '<span class="lbl-h"><span>Vitória ' + pt(m.home) + '</span> <b>' + odds.h + '%</b></span>' +
+                '<span class="lbl-d"><span>Empate</span> <b>' + odds.d + '%</b></span>' +
+                '<span class="lbl-a"><span>Vitória ' + pt(m.away) + '</span> <b>' + odds.a + '%</b></span>' +
+              '</div>' +
+            '</div>';
   });
   container.innerHTML = html;
 }
 
-// FAVORITOS AO TÍTULO
-const titleFavorites = [
-  { team: 'Brazil', pct: 15.4, color: 'var(--bar-br)' },
-  { team: 'France', pct: 14.1, color: 'var(--bar-default)' },
-  { team: 'England', pct: 11.8, color: 'var(--bar-default)' },
-  { team: 'Argentina', pct: 10.5, color: 'var(--bar-default)' },
-  { team: 'Spain', pct: 8.2, color: 'var(--bar-default)' },
-  { team: 'Germany', pct: 7.6, color: 'var(--bar-default)' }
+var titleFavorites = [
+  { team: 'Brazil', pct: 15.4, color: 'var(--bar-br)' }, { team: 'France', pct: 14.1, color: 'var(--bar-default)' },
+  { team: 'England', pct: 11.8, color: 'var(--bar-default)' }, { team: 'Argentina', pct: 10.5, color: 'var(--bar-default)' }
 ];
 
 function renderFavorites() {
-  const container = document.getElementById('favorites-container');
-  let html = '';
-  titleFavorites.forEach(f => {
-    const barWidth = f.pct * 4.5; 
-    html += `
-      <div class="fav-item">
-        <div class="fav-header">
-          <div class="fav-name"><span class="flag">${flag(f.team)}</span> ${pt(f.team)}</div>
-          <div class="fav-pct">${f.pct}%</div>
-        </div>
-        <div class="fav-bar-track">
-          <div class="fav-bar-fill" style="width: 0%; background: ${f.color}" data-target="${barWidth}%"></div>
-        </div>
-      </div>
-    `;
+  var container = document.getElementById('favorites-container'); var html = '';
+  titleFavorites.forEach(function(f) {
+    html += '<div class="fav-item"><div class="fav-header"><div class="fav-name"><span class="flag">' + flag(f.team) + '</span> ' + pt(f.team) + '</div><div class="fav-pct">' + f.pct + '%</div></div><div class="fav-bar-track"><div class="fav-bar-fill" style="width: 0%; background: ' + f.color + '" data-target="' + (f.pct * 5) + '%"></div></div></div>';
   });
   container.innerHTML = html;
-
-  setTimeout(() => {
-    document.querySelectorAll('.fav-bar-fill').forEach(bar => {
-      bar.style.width = bar.getAttribute('data-target');
-    });
+  setTimeout(function() {
+    var bars = document.querySelectorAll('.fav-bar-fill');
+    for (var i = 0; i < bars.length; i++) bars[i].style.width = bars[i].getAttribute('data-target');
   }, 300);
 }
 
-// CARROSSEL DE CURIOSIDADES
-const triviaData = [
-  { icon: '🏟️', text: 'O Estádio Azteca, no México, fará história ao se tornar o primeiro estádio do mundo a sediar partidas de três Copas do Mundo diferentes (1970, 1986 e 2026).' },
-  { icon: '🌎', text: 'Pela primeira vez na história, o torneio será organizado por três países sede simultaneamente: Estados Unidos, México e Canadá.' },
-  { icon: '⚽', text: 'Esta será a maior Copa do Mundo de todos os tempos, com a expansão de 32 para 48 seleções participantes, totalizando 104 partidas disputadas.' },
-  { icon: '✈️', text: 'O deslocamento será um desafio tático. A distância entre a cidade-sede mais ao norte (Vancouver) e a mais ao sul (Cidade do México) é de mais de 4.000 km.' },
-  { icon: '🏆', text: 'A final da competição está marcada para o dia 19 de Julho de 2026, e ocorrerá no MetLife Stadium, em Nova Jersey (EUA).' }
-];
+// PROJEÇÃO OFICIAL DE MATA-MATA (Puxando a liderança matemática real do dia)
+function renderProjectedBracket() {
+  var container = document.getElementById('bracket-container');
+  if(!container) return;
+  
+  var projections = [
+    { g1: 'A', p1: 0, g2: 'B', p2: 1, lbl: '1º Grupo A vs 2º Grupo B' },
+    { g1: 'C', p1: 0, g2: 'D', p2: 1, lbl: '1º Grupo C vs 2º Grupo D' },
+    { g1: 'E', p1: 0, g2: 'F', p2: 1, lbl: '1º Grupo E vs 2º Grupo F' },
+    { g1: 'G', p1: 0, g2: 'H', p2: 1, lbl: '1º Grupo G vs 2º Grupo H' },
+    { g1: 'I', p1: 0, g2: 'J', p2: 1, lbl: '1º Grupo I vs 2º Grupo J' },
+    { g1: 'K', p1: 0, g2: 'L', p2: 1, lbl: '1º Grupo K vs 2º Grupo L' }
+  ];
 
-triviaData.sort(() => Math.random() - 0.5);
+  var html = '';
+  projections.forEach(function(p) {
+    var g1Arr = CURRENT_GROUPS[p.g1]; var g2Arr = CURRENT_GROUPS[p.g2];
+    var t1 = (g1Arr && g1Arr[p.p1]) ? g1Arr[p.p1] : '';
+    var t2 = (g2Arr && g2Arr[p.p2]) ? g2Arr[p.p2] : '';
 
-let currentTrivia = 0;
-const triviaInterval = 12000; 
-
-function updateTrivia() {
-  const textEl = document.getElementById('trivia-text');
-  const iconEl = document.getElementById('trivia-icon');
-  const progEl = document.getElementById('trivia-progress');
-
-  textEl.style.opacity = 0;
-  progEl.style.transition = 'none';
-  progEl.style.width = '0%';
-
-  setTimeout(() => {
-    iconEl.textContent = triviaData[currentTrivia].icon;
-    textEl.textContent = triviaData[currentTrivia].text;
-    textEl.style.opacity = 1;
-    
-    setTimeout(() => {
-      progEl.style.transition = `width ${triviaInterval}ms linear`;
-      progEl.style.width = '100%';
-    }, 50);
-
-    currentTrivia = (currentTrivia + 1) % triviaData.length;
-  }, 500);
+    var name1 = t1 ? pt(t1) : 'A Definir'; var name2 = t2 ? pt(t2) : 'A Definir';
+    html += '<div class="bracket-match">' +
+              '<div class="bracket-team"><span class="flag">' + flag(t1) + '</span> <span>' + name1 + '</span></div>' +
+              '<div class="bracket-center"><div class="bracket-seed">' + p.lbl + '</div><div class="bracket-vs">X</div></div>' +
+              '<div class="bracket-team right"><span>' + name2 + '</span> <span class="flag">' + flag(t2) + '</span></div>' +
+            '</div>';
+  });
+  container.innerHTML = html;
 }
 
-// ── INICIALIZAÇÃO ──
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', function() {
   fetchRealMatches();
   setInterval(fetchRealMatches, 60000);
-  
   renderFavorites();
-  
-  updateTrivia();
-  setInterval(updateTrivia, triviaInterval);
-
-  setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').textContent = 
-      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  setInterval(function() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0'); var m = String(now.getMinutes()).padStart(2, '0');
+    var clk = document.getElementById('clock'); if (clk) clk.textContent = h + ':' + m;
   }, 1000);
 });
 </script>
