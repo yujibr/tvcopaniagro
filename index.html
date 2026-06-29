@@ -681,13 +681,15 @@ function renderGames(){
   let totalGoals = 0;
   let maxGoals = 0;
   let highMatch = '—';
+  let highMatchTeams = '';
 
   done.forEach(g => {
       const sum = g.homeScore + g.awayScore;
       totalGoals += sum;
       if (sum > maxGoals) {
           maxGoals = sum;
-          highMatch = `${g.homeScore} – ${g.awayScore}`;
+          highMatch = `${g.homeScore}–${g.awayScore}`;
+          highMatchTeams = `${pt(g.homeName)} ${g.homeScore}–${g.awayScore} ${pt(g.awayName)}`;
       }
   });
 
@@ -696,7 +698,11 @@ function renderGames(){
   document.getElementById('stat-played').textContent = done.length;
   document.getElementById('stat-goals').textContent = totalGoals;
   document.getElementById('stat-avg').textContent = avg;
-  document.getElementById('stat-high').textContent = done.length > 0 ? highMatch : '—';
+  const highEl = document.getElementById('stat-high');
+  if (highEl) {
+    highEl.textContent = done.length > 0 ? highMatch : '—';
+    highEl.title = highMatchTeams; // tooltip com os times
+  }
   
   const brGames = allGames.filter(g => g.homeName === 'Brazil' || g.awayName === 'Brazil').sort((a,b) => new Date(a.date) - new Date(b.date));
   const brFixturesEl = document.getElementById('br-fixtures-list');
@@ -704,18 +710,17 @@ function renderGames(){
   if (brFixturesEl && brGames.length > 0) {
     brFixturesEl.innerHTML = brGames.slice(0, 3).map(g => {
       const oppName = g.homeName === 'Brazil' ? g.awayName : g.homeName;
-      const brScore = g.homeName === 'Brazil' ? g.homeScore : g.awayScore;
-      const oppScore = g.homeName === 'Brazil' ? g.awayScore : g.homeScore;
 
       if (g.isDone) {
          return `<div class="br-fix">
-           <div class="opp-name" style="margin-bottom:4px;">${pt(oppName)}</div>
-           <div class="fix-date" style="color: var(--gold); font-size: 14px; font-weight: 800;">🇧🇷 ${brScore} <span style="color:var(--muted); font-weight:400">x</span> ${oppScore} <span style="font-size:16px">${flag(oppName)}</span></div>
+           <div class="opp" style="font-size: 20px;">${flag(oppName)}</div>
+           <div class="opp-name">${pt(oppName)}</div>
+           <div class="fix-date" style="color:#4CAF50">✓ Encerrado</div>
          </div>`;
       } else if (g.isLive) {
          return `<div class="br-fix">
-           <div class="opp-name" style="margin-bottom:4px; color:#FF5555;">${pt(oppName)} <span style="animation: pulse 1s infinite">●</span></div>
-           <div class="fix-date" style="color: #FF5555; font-size: 14px; font-weight: 800;">🇧🇷 ${brScore} <span style="color:rgba(255,85,85,0.5); font-weight:400">x</span> ${oppScore} <span style="font-size:16px">${flag(oppName)}</span></div>
+           <div class="opp-name" style="color:#FF5555;">${pt(oppName)} <span style="animation: pulse 1s infinite">●</span></div>
+           <div class="fix-date" style="color:#FF5555;font-weight:700">AO VIVO</div>
          </div>`;
       } else {
          return `<div class="br-fix">
@@ -811,31 +816,316 @@ function renderBracket() {
   const wrap = document.getElementById('knockout-wrap');
   if (!wrap) return;
 
-  const phases = [
-    { name: '16 Avos', matches: 16 },
-    { name: 'Oitavas', matches: 8 },
-    { name: 'Quartas', matches: 4 },
-    { name: 'Semifinal', matches: 2 },
-    { name: 'Final', matches: 1 }
+  // ── CHAVEAMENTO REAL DA COPA 2026 (16 AVOS) ──
+  // Fonte: FIFA / ESPN / CBF — todos os confrontos oficiais definidos em 28/06/2026
+  // Os placares são atualizados dinamicamente via allGames (API ESPN)
+  const BRACKET_16AVOS = [
+    { home:'South Africa', away:'Canada',              date:'2026-06-28T19:00:00Z', venue:'Los Angeles'   },
+    { home:'Brazil',       away:'Japan',               date:'2026-06-29T17:00:00Z', venue:'Houston'       },
+    { home:'Germany',      away:'Paraguay',            date:'2026-06-29T20:30:00Z', venue:'Boston'        },
+    { home:'Netherlands',  away:'Morocco',             date:'2026-06-30T01:00:00Z', venue:'Monterrey'     },
+    { home:"Côte d'Ivoire",away:'Norway',              date:'2026-06-30T17:00:00Z', venue:'Dallas'        },
+    { home:'France',       away:'Sweden',              date:'2026-06-30T21:00:00Z', venue:'Nova Jersey'   },
+    { home:'Mexico',       away:'Ecuador',             date:'2026-07-01T01:00:00Z', venue:'Cidade do México'},
+    { home:'England',      away:'Congo DR',            date:'2026-07-01T16:00:00Z', venue:'Atlanta'       },
+    { home:'Belgium',      away:'Senegal',             date:'2026-07-01T20:00:00Z', venue:'Seattle'       },
+    { home:'USA',          away:'Bosnia and Herzegovina',date:'2026-07-02T00:00:00Z', venue:'San Francisco'},
+    { home:'Spain',        away:'Austria',             date:'2026-07-02T19:00:00Z', venue:'Los Angeles'   },
+    { home:'Portugal',     away:'Croatia',             date:'2026-07-02T23:00:00Z', venue:'Toronto'       },
+    { home:'Switzerland',  away:'Algeria',             date:'2026-07-03T03:00:00Z', venue:'Vancouver'     },
+    { home:'Australia',    away:'Egypt',               date:'2026-07-03T18:00:00Z', venue:'Dallas'        },
+    { home:'Argentina',    away:'Cape Verde',          date:'2026-07-03T22:00:00Z', venue:'Miami'         },
+    { home:'Colombia',     away:'Ghana',               date:'2026-07-04T01:30:00Z', venue:'Kansas City'   },
   ];
 
-  let html = '';
-  phases.forEach(phase => {
-    html += `<div class="bracket-col"><div class="bracket-title">${phase.name}</div>`;
-    
-    for(let i = 0; i < phase.matches; i++) {
-      html += `
-        <div class="bracket-match">
-          <div class="b-team"><div class="b-team-name"><span class="flag-sm">&#9873;</span> A Definir</div><div class="b-score">-</div></div>
-          <div class="b-team"><div class="b-team-name"><span class="flag-sm">&#9873;</span> A Definir</div><div class="b-score">-</div></div>
-        </div>
-      `;
-    }
-    
-    html += `</div>`;
+  // Índice de jogos da API para buscar placares atualizados
+  const apiIndex = {};
+  allGames.forEach(g => {
+    const k1 = (g.homeName||'').toLowerCase() + '-' + (g.awayName||'').toLowerCase();
+    const k2 = (g.awayName||'').toLowerCase() + '-' + (g.homeName||'').toLowerCase();
+    apiIndex[k1] = g;
+    apiIndex[k2] = g;
   });
-  
-  wrap.innerHTML = html;
+
+  function lookupGame(home, away) {
+    const k = home.toLowerCase() + '-' + away.toLowerCase();
+    const k2 = away.toLowerCase() + '-' + home.toLowerCase();
+    return apiIndex[k] || apiIndex[k2] || null;
+  }
+
+  function buildMatchHTML(slot, apiGame) {
+    const homeName = slot.home;
+    const awayName = slot.away;
+    const g = apiGame;
+
+    let hScore = '-', aScore = '-', isLive = false, isDone = false, isReversed = false;
+
+    if (g) {
+      isLive = g.isLive;
+      isDone = g.isDone;
+      // A ESPN pode ter o mandante invertido — detectar
+      const apiHomeNorm = (g.homeName||'').toLowerCase();
+      const slotHomeNorm = homeName.toLowerCase();
+      isReversed = apiHomeNorm !== slotHomeNorm && (g.awayName||'').toLowerCase().includes(slotHomeNorm.slice(0,5));
+
+      if (isDone || isLive) {
+        hScore = isReversed ? String(g.awayScore) : String(g.homeScore);
+        aScore = isReversed ? String(g.homeScore) : String(g.awayScore);
+      }
+    }
+
+    const hWin = isDone && hScore > aScore;
+    const aWin = isDone && aScore > hScore;
+    const liveDot = isLive ? '<span style="color:#FF5555;font-size:9px;margin-left:4px;animation:pulse 1s infinite">●</span>' : '';
+    const statusBadge = isDone
+      ? `<div style="font-size:9px;color:#4CAF50;text-align:center;margin-top:3px">✓ Encerrado</div>`
+      : isLive
+        ? `<div style="font-size:9px;color:#FF5555;text-align:center;margin-top:3px;animation:pulse 2s infinite">● AO VIVO</div>`
+        : `<div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px">${fmtDate(slot.date)} · ${fmtTime(slot.date)}</div>`;
+
+    const borderStyle = isLive ? ' style="border-color:#FF5555;box-shadow:0 0 10px rgba(255,85,85,0.35)"' : '';
+
+    return `<div class="bracket-match"${borderStyle}>
+      <div class="b-team${hWin?' winner':''}">
+        <div class="b-team-name">${flag(homeName)} ${pt(homeName)}${liveDot}</div>
+        <div class="b-score">${hScore}</div>
+      </div>
+      <div class="b-team${aWin?' winner':''}">
+        <div class="b-team-name">${flag(awayName)} ${pt(awayName)}</div>
+        <div class="b-score">${aScore}</div>
+      </div>
+      ${statusBadge}
+    </div>`;
+  }
+
+  // ── 16 AVOS ──
+  let html16 = `<div class="bracket-col"><div class="bracket-title">16 Avos de Final</div>`;
+  BRACKET_16AVOS.forEach(slot => {
+    const apiGame = lookupGame(slot.home, slot.away);
+    html16 += buildMatchHTML(slot, apiGame);
+  });
+  html16 += `</div>`;
+
+  // ── HELPER: extrai vencedor de um jogo dado o slot fixo ──
+  function getWinner(home, away) {
+    const g = lookupGame(home, away);
+    if (!g || !g.isDone) return null;
+    // detecta se a API inverteu os times
+    const apiHomeNorm = (g.homeName||'').toLowerCase();
+    const slotHomeNorm = home.toLowerCase();
+    const invertido = !apiHomeNorm.includes(slotHomeNorm.slice(0,4)) &&
+                      (g.awayName||'').toLowerCase().includes(slotHomeNorm.slice(0,4));
+    const hScore = invertido ? g.awayScore : g.homeScore;
+    const aScore = invertido ? g.homeScore : g.awayScore;
+    if (hScore > aScore) return home;
+    if (aScore > hScore) return away;
+    return null; // empate não deve existir no mata-mata (pênaltis — ESPN marca como um dos lados)
+  }
+
+  // ── OITAVAS — mapeamento oficial do chaveamento FIFA 2026 ──
+  // Cada par de oitavas = [venc_jogo_A, venc_jogo_B]
+  // Ordem conforme chaveamento oficial publicado pela FIFA
+  const OITAVAS_MAP = [
+    { a: {home:'Germany',     away:'Paraguay'           }, b: {home:'France',   away:'Sweden'    }, date:'2026-07-04', venue:'A definir' },
+    { a: {home:'South Africa',away:'Canada'             }, b: {home:'Netherlands',away:'Morocco' }, date:'2026-07-04', venue:'A definir' },
+    { a: {home:'Portugal',    away:'Croatia'            }, b: {home:'Spain',    away:'Austria'   }, date:'2026-07-05', venue:'A definir' },
+    { a: {home:'USA',         away:'Bosnia and Herzegovina'}, b: {home:'Belgium', away:'Senegal'}, date:'2026-07-05', venue:'A definir' },
+    { a: {home:'Brazil',      away:'Japan'              }, b: {home:"Côte d'Ivoire",away:'Norway'}, date:'2026-07-06', venue:'A definir' },
+    { a: {home:'Mexico',      away:'Ecuador'            }, b: {home:'England',  away:'Congo DR'  }, date:'2026-07-06', venue:'A definir' },
+    { a: {home:'Argentina',   away:'Cape Verde'         }, b: {home:'Australia',away:'Egypt'     }, date:'2026-07-07', venue:'A definir' },
+    { a: {home:'Switzerland', away:'Algeria'            }, b: {home:'Colombia', away:'Ghana'     }, date:'2026-07-07', venue:'A definir' },
+  ];
+
+  function buildPendingSlot(labelA, labelB, date) {
+    return `<div class="bracket-match">
+      <div class="b-team">
+        <div class="b-team-name" style="font-size:10px;opacity:.65;white-space:normal;line-height:1.2">Venc. ${pt(labelA.home)} × ${pt(labelA.away)}</div>
+        <div class="b-score">-</div>
+      </div>
+      <div class="b-team">
+        <div class="b-team-name" style="font-size:10px;opacity:.65;white-space:normal;line-height:1.2">Venc. ${pt(labelB.home)} × ${pt(labelB.away)}</div>
+        <div class="b-score">-</div>
+      </div>
+      <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px">${date}</div>
+    </div>`;
+  }
+
+  let htmlOitavas = `<div class="bracket-col"><div class="bracket-title">Oitavas de Final</div>`;
+
+  // Também tenta buscar oitavas já disputadas na API (4 a 7 jul)
+  const oitavasApiGames = allGames.filter(g => {
+    const d = new Date(g.date);
+    return d >= new Date('2026-07-04T17:00:00Z') && d <= new Date('2026-07-08T00:00:00Z');
+  }).sort((a,b) => new Date(a.date)-new Date(b.date));
+
+  OITAVAS_MAP.forEach((par, idx) => {
+    // Tenta achar o jogo já na API (oitavas em andamento/encerradas)
+    const apiMatch = oitavasApiGames[idx] || null;
+    if (apiMatch) {
+      htmlOitavas += buildMatchHTML({ home: apiMatch.homeName, away: apiMatch.awayName, date: apiMatch.date }, apiMatch);
+      return;
+    }
+
+    // Deriva os vencedores dos 16 avos
+    const winA = getWinner(par.a.home, par.a.away);
+    const winB = getWinner(par.b.home, par.b.away);
+
+    if (winA && winB) {
+      // Ambos os jogos terminaram — mostra o confronto definido (ainda sem placar)
+      htmlOitavas += `<div class="bracket-match" style="border-color:rgba(255,223,0,0.3)">
+        <div class="b-team">
+          <div class="b-team-name">${flag(winA)} ${pt(winA)}</div>
+          <div class="b-score">-</div>
+        </div>
+        <div class="b-team">
+          <div class="b-team-name">${flag(winB)} ${pt(winB)}</div>
+          <div class="b-score">-</div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px">${par.date}</div>
+      </div>`;
+    } else if (winA && !winB) {
+      htmlOitavas += `<div class="bracket-match">
+        <div class="b-team"><div class="b-team-name">${flag(winA)} ${pt(winA)}</div><div class="b-score">-</div></div>
+        <div class="b-team"><div class="b-team-name" style="font-size:10px;opacity:.65">Venc. ${pt(par.b.home)} × ${pt(par.b.away)}</div><div class="b-score">-</div></div>
+      </div>`;
+    } else if (!winA && winB) {
+      htmlOitavas += `<div class="bracket-match">
+        <div class="b-team"><div class="b-team-name" style="font-size:10px;opacity:.65">Venc. ${pt(par.a.home)} × ${pt(par.a.away)}</div><div class="b-score">-</div></div>
+        <div class="b-team"><div class="b-team-name">${flag(winB)} ${pt(winB)}</div><div class="b-score">-</div></div>
+      </div>`;
+    } else {
+      htmlOitavas += buildPendingSlot(par.a, par.b, par.date);
+    }
+  });
+
+  htmlOitavas += `</div>`;
+
+  // ── QUARTAS — mapeamento oficial FIFA 2026 ──
+  // Quartas 1 = Oitavas1 vs Oitavas2, etc.
+  // Chave: [índice da oitava A, índice da oitava B]
+  const QUARTAS_MAP = [
+    { oa: 0, ob: 1, date: '09/07' },  // Venc.Oit1 × Venc.Oit2
+    { oa: 2, ob: 3, date: '10/07' },  // Venc.Oit3 × Venc.Oit4
+    { oa: 4, ob: 5, date: '10/07' },  // Venc.Oit5 × Venc.Oit6
+    { oa: 6, ob: 7, date: '11/07' },  // Venc.Oit7 × Venc.Oit8
+  ];
+
+  // Calcula vencedor de oitava (baseado nos 16 avos)
+  function getOitavaWinner(idx) {
+    const par = OITAVAS_MAP[idx];
+    // Primeiro tenta o jogo das oitavas já na API
+    const apiMatch = oitavasApiGames[idx] || null;
+    if (apiMatch && apiMatch.isDone) {
+      return apiMatch.homeScore > apiMatch.awayScore ? apiMatch.homeName : apiMatch.awayName;
+    }
+    // Fallback: retorna null (ainda não definido)
+    return null;
+  }
+
+  function buildAutoSlot(nameA, nameB, labelA, labelB, date) {
+    const showA = nameA || `Venc. Oit.${labelA+1}`;
+    const showB = nameB || `Venc. Oit.${labelB+1}`;
+    const styleA = nameA ? '' : ' style="opacity:.55;font-size:10px"';
+    const styleB = nameB ? '' : ' style="opacity:.55;font-size:10px"';
+    const flagA  = nameA ? flag(nameA) : '❓';
+    const flagB  = nameB ? flag(nameB) : '❓';
+    const ptA    = nameA ? pt(nameA) : showA;
+    const ptB    = nameB ? pt(nameB) : showB;
+    return `<div class="bracket-match">
+      <div class="b-team"><div class="b-team-name"${styleA}>${flagA} ${ptA}</div><div class="b-score">-</div></div>
+      <div class="b-team"><div class="b-team-name"${styleB}>${flagB} ${ptB}</div><div class="b-score">-</div></div>
+      <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px">${date}</div>
+    </div>`;
+  }
+
+  const quartasApiGames = allGames.filter(g => {
+    const d = new Date(g.date);
+    return d >= new Date('2026-07-09T00:00:00Z') && d <= new Date('2026-07-12T00:00:00Z');
+  }).sort((a,b) => new Date(a.date)-new Date(b.date));
+
+  let htmlQuartas = `<div class="bracket-col"><div class="bracket-title">Quartas de Final</div>`;
+  QUARTAS_MAP.forEach((par, idx) => {
+    const apiMatch = quartasApiGames[idx] || null;
+    if (apiMatch) {
+      htmlQuartas += buildMatchHTML({ home: apiMatch.homeName, away: apiMatch.awayName, date: apiMatch.date }, apiMatch);
+    } else {
+      const winA = getOitavaWinner(par.oa);
+      const winB = getOitavaWinner(par.ob);
+      htmlQuartas += buildAutoSlot(winA, winB, par.oa, par.ob, par.date);
+    }
+  });
+  htmlQuartas += `</div>`;
+
+  // ── SEMIFINAL — mapeamento oficial FIFA 2026 ──
+  const SEMI_MAP = [
+    { qa: 0, qb: 1, date: '14/07' },
+    { qa: 2, qb: 3, date: '15/07' },
+  ];
+
+  function getQuartaWinner(idx) {
+    const apiMatch = quartasApiGames[idx] || null;
+    if (apiMatch && apiMatch.isDone) {
+      return apiMatch.homeScore > apiMatch.awayScore ? apiMatch.homeName : apiMatch.awayName;
+    }
+    return null;
+  }
+
+  const semiApiGames = allGames.filter(g => {
+    const d = new Date(g.date);
+    return d >= new Date('2026-07-14T00:00:00Z') && d <= new Date('2026-07-16T00:00:00Z');
+  }).sort((a,b) => new Date(a.date)-new Date(b.date));
+
+  let htmlSemi = `<div class="bracket-col"><div class="bracket-title">Semifinal</div>`;
+  SEMI_MAP.forEach((par, idx) => {
+    const apiMatch = semiApiGames[idx] || null;
+    if (apiMatch) {
+      htmlSemi += buildMatchHTML({ home: apiMatch.homeName, away: apiMatch.awayName, date: apiMatch.date }, apiMatch);
+    } else {
+      const winA = getQuartaWinner(par.qa);
+      const winB = getQuartaWinner(par.qb);
+      htmlSemi += buildAutoSlot(winA, winB, par.qa, par.qb, par.date);
+    }
+  });
+  htmlSemi += `</div>`;
+
+  // ── FINAL ──
+  function getSemiWinner(idx) {
+    const apiMatch = semiApiGames[idx] || null;
+    if (apiMatch && apiMatch.isDone) {
+      return apiMatch.homeScore > apiMatch.awayScore ? apiMatch.homeName : apiMatch.awayName;
+    }
+    return null;
+  }
+
+  const finalApiGames = allGames.filter(g => {
+    const d = new Date(g.date);
+    return d >= new Date('2026-07-19T00:00:00Z') && d <= new Date('2026-07-20T00:00:00Z');
+  });
+  const finalGame = finalApiGames[0] || null;
+
+  let htmlFinal = `<div class="bracket-col"><div class="bracket-title">🏆 Final · 19 Jul</div>`;
+  if (finalGame) {
+    htmlFinal += buildMatchHTML({ home: finalGame.homeName, away: finalGame.awayName, date: finalGame.date }, finalGame);
+  } else {
+    const winSemi1 = getSemiWinner(0);
+    const winSemi2 = getSemiWinner(1);
+    if (winSemi1 && winSemi2) {
+      htmlFinal += `<div class="bracket-match" style="border-color:var(--gold);box-shadow:0 0 15px rgba(255,223,0,0.25)">
+        <div class="b-team"><div class="b-team-name">${flag(winSemi1)} ${pt(winSemi1)}</div><div class="b-score">-</div></div>
+        <div class="b-team"><div class="b-team-name">${flag(winSemi2)} ${pt(winSemi2)}</div><div class="b-score">-</div></div>
+        <div style="font-size:9px;color:var(--gold);text-align:center;margin-top:3px">19/07 · Nova York/NJ</div>
+      </div>`;
+    } else {
+      htmlFinal += `<div class="bracket-match" style="border-color:var(--gold);box-shadow:0 0 15px rgba(255,223,0,0.2)">
+        <div class="b-team"><div class="b-team-name" style="opacity:.5">🏆 ${winSemi1 ? pt(winSemi1) : 'A Definir'}</div><div class="b-score">-</div></div>
+        <div class="b-team"><div class="b-team-name" style="opacity:.5">${winSemi2 ? pt(winSemi2) : 'A Definir'}</div><div class="b-score">-</div></div>
+        <div style="font-size:9px;color:var(--gold);text-align:center;margin-top:3px">19/07 · Nova York/NJ</div>
+      </div>`;
+    }
+  }
+  htmlFinal += `</div>`;
+
+  wrap.innerHTML = html16 + htmlOitavas + htmlQuartas + htmlSemi + htmlFinal;
 }
 
 async function loadData(){
@@ -844,36 +1134,40 @@ async function loadData(){
   statusEl.textContent='ATUALIZANDO';
   
   try {
-      const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-      const startDate = '20260611'; 
-      const endDate = '20260719';
-      
-      const urls = [
-        `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${startDate}-${endDate}&limit=200`,
-        `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${today}&limit=50`,
-      ];
-      
-      let ok=false;
-      for(const url of urls){
-        try{
-          const r=await fetch(url);
-          if(!r.ok) continue;
-          const data=await r.json();
-          parseGames(data);
-          try{
-            const sr=await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
-            if(sr.ok) parseStandings(await sr.json());
-          }catch(e){}
-          ok=true; break;
-        }catch(e){}
+      // Busca em duas fatias para garantir todos os 104 jogos da copa
+      const urlGrupos   = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260628&limit=100`;
+      const urlMataMata = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260629-20260719&limit=100`;
+
+      let ok = false;
+      try {
+        const [r1, r2] = await Promise.all([fetch(urlGrupos), fetch(urlMataMata)]);
+        if (r1.ok && r2.ok) {
+          const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
+          // Mescla os eventos das duas respostas
+          const merged = { events: [...(d1.events||[]), ...(d2.events||[])] };
+          parseGames(merged);
+          ok = true;
+        } else if (r1.ok) {
+          parseGames(await r1.json()); ok = true;
+        } else if (r2.ok) {
+          parseGames(await r2.json()); ok = true;
+        }
+      } catch(e) {}
+
+      if (ok) {
+        try {
+          const sr = await fetch('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
+          if (sr.ok) parseStandings(await sr.json());
+        } catch(e) {}
       }
-      
-      statusEl.className = ok?'api-status api-ok':'api-status api-err';
-      statusEl.textContent = ok?'ESPN ● AO VIVO':'DADOS LOCAIS';
-      if(!ok) loadFallback();
+
+      statusEl.className = ok ? 'api-status api-ok' : 'api-status api-err';
+      statusEl.textContent = ok ? 'ESPN ● AO VIVO' : 'DADOS LOCAIS';
+      if (!ok) loadFallback();
       
       renderGames();
       renderGroups();
+      if (IS_KNOCKOUT_PHASE) renderBracket();
       
   } catch (err) {
       console.error('Erro geral ao processar os dados:', err);
@@ -886,12 +1180,25 @@ async function loadData(){
 }
 
 function loadFallback(){
+  // Todos os 16 confrontos dos 16 avos de final — Copa do Mundo 2026
+  // Resultado confirmado: África do Sul 0 x 1 Canadá (28/06)
   allGames=[
-    {id:'br-ma', date:'2026-06-13T22:00:00Z',homeName:'Brazil',awayName:'Morocco',homeScore:2,awayScore:0,state:'post',detail:'FT',isDone:true,isLive:false,isPre:false,group:'Grupo C',venue:'Nova York/NJ', justScored: false},
-    {id:'mx-sa', date:'2026-06-11T19:00:00Z',homeName:'Mexico',awayName:'South Africa',homeScore:2,awayScore:1,state:'in',detail:'78\'',isDone:false,isLive:true,isPre:false,group:'Grupo A',venue:'Cidade do México', justScored: true},
-    {id:'ca-it', date:'2026-06-12T19:00:00Z',homeName:'Canada',awayName:'Italy',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo B',venue:'Toronto', justScored: false},
-    {id:'us-pa', date:'2026-06-13T01:00:00Z',homeName:'United States',awayName:'Paraguay',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo D',venue:'Los Angeles', justScored: false},
-    {id:'ge-cu', date:'2026-06-14T17:00:00Z',homeName:'Germany',awayName:'Curaçao',homeScore:0,awayScore:0,state:'pre',detail:'',isDone:false,isLive:false,isPre:true,group:'Grupo E',venue:'Houston', justScored: false},
+    {id:'rsa-can',date:'2026-06-28T19:00:00Z',homeName:'South Africa',awayName:'Canada',                homeScore:0,awayScore:1,state:'post',detail:'FT',isDone:true, isLive:false,isPre:false,group:'16 Avos de Final',venue:'Los Angeles',      justScored:false},
+    {id:'bra-jpn',date:'2026-06-29T17:00:00Z',homeName:'Brazil',      awayName:'Japan',                 homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Houston',           justScored:false},
+    {id:'ger-par',date:'2026-06-29T20:30:00Z',homeName:'Germany',     awayName:'Paraguay',              homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Boston',            justScored:false},
+    {id:'ned-mar',date:'2026-06-30T01:00:00Z',homeName:'Netherlands', awayName:'Morocco',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Monterrey',         justScored:false},
+    {id:'civ-nor',date:'2026-06-30T17:00:00Z',homeName:"Côte d'Ivoire",awayName:'Norway',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Dallas',            justScored:false},
+    {id:'fra-swe',date:'2026-06-30T21:00:00Z',homeName:'France',      awayName:'Sweden',                homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Nova Jersey',       justScored:false},
+    {id:'mex-ecu',date:'2026-07-01T01:00:00Z',homeName:'Mexico',      awayName:'Ecuador',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Cidade do México',  justScored:false},
+    {id:'eng-cod',date:'2026-07-01T16:00:00Z',homeName:'England',     awayName:'Congo DR',              homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Atlanta',           justScored:false},
+    {id:'bel-sen',date:'2026-07-01T20:00:00Z',homeName:'Belgium',     awayName:'Senegal',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Seattle',           justScored:false},
+    {id:'usa-bih',date:'2026-07-02T00:00:00Z',homeName:'United States',awayName:'Bosnia and Herzegovina',homeScore:0,awayScore:0,state:'pre',detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'San Francisco',    justScored:false},
+    {id:'esp-aut',date:'2026-07-02T19:00:00Z',homeName:'Spain',       awayName:'Austria',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Los Angeles',      justScored:false},
+    {id:'por-cro',date:'2026-07-02T23:00:00Z',homeName:'Portugal',    awayName:'Croatia',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Toronto',          justScored:false},
+    {id:'sui-alg',date:'2026-07-03T03:00:00Z',homeName:'Switzerland', awayName:'Algeria',               homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Vancouver',        justScored:false},
+    {id:'aus-egy',date:'2026-07-03T18:00:00Z',homeName:'Australia',   awayName:'Egypt',                 homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Dallas',           justScored:false},
+    {id:'arg-cpv',date:'2026-07-03T22:00:00Z',homeName:'Argentina',   awayName:'Cape Verde',            homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Miami',            justScored:false},
+    {id:'col-gha',date:'2026-07-04T01:30:00Z',homeName:'Colombia',    awayName:'Ghana',                 homeScore:0,awayScore:0,state:'pre', detail:'',  isDone:false,isLive:false,isPre:true, group:'16 Avos de Final',venue:'Kansas City',      justScored:false},
   ];
 }
 
@@ -960,8 +1267,6 @@ window.addEventListener('DOMContentLoaded',()=>{
     
     const panelTitle = document.getElementById('right-panel-title');
     if (panelTitle) panelTitle.innerHTML = '<div class="accent"></div>Chaveamento — Rumo ao Título';
-    
-    renderBracket();
   }
 
   updateClock();
